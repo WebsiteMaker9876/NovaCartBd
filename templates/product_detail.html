@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row bg-white p-4 rounded shadow-sm">
+    <div class="col-md-5 mb-4 mb-md-0">
+        <img src="{{ product.image }}" class="img-fluid rounded border" alt="{{ product.name }}">
+    </div>
+
+    <div class="col-md-7">
+        <span class="badge bg-secondary mb-2">{{ product.category }} | কোড: {{ product.code }}</span>
+        <h3 class="fw-bold">{{ product.name }}</h3>
+        
+        <div class="my-3">
+            <span class="fs-3 fw-bold text-danger">৳ {{ product.sale_price|int }}</span>
+            <span class="text-decoration-line-through text-muted fs-5 ms-2">৳ {{ product.regular_price|int }}</span>
+        </div>
+
+        <p class="text-secondary">{{ product.description }}</p>
+        
+        <hr>
+
+        <div class="card p-3 bg-light border-warning mb-4">
+            <h5 class="fw-bold text-dark mb-3">✍️ দ্রুত অর্ডার করতে তথ্য দিন (ক্যাশ অন ডেলিভারি)</h5>
+            <form action="/quick_order/{{ product.id }}" method="POST">
+                <div class="mb-2">
+                    <label class="form-label small fw-bold">আপনার নাম *</label>
+                    <input type="text" name="name" class="form-control" placeholder="আপনার পূর্ণ নাম" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small fw-bold">মোবাইল নম্বর *</label>
+                    <input type="tel" name="phone" class="form-control" placeholder="০১৭xxxxxxxx" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small fw-bold">সম্পূর্ণ ঠিকানা *</label>
+                    <textarea name="address" class="form-control" rows="2" placeholder="বাসা নম্বর, রোড, এলাকা..." required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">ডেলিভারি এলাকা *</label>
+                    <select name="area" class="form-select" required>
+                        <option value="dhaka_inside">ঢাকা সিটি (৬০ টাকা)</option>
+                        <option value="dhaka_sub">ঢাকা সাব এরিয়া (১০০ টাকা)</option>
+                        <option value="outside_dhaka">ঢাকার বাইরে (১২০ টাকা)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-order btn-lg fs-6 py-2"><i class="fa-solid fa-check-circle"></i> অর্ডার কনফার্ম করুন</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if related %}
+<h4 class="fw-bold mt-5 mb-3">🛍️ আপনার পছন্দ হতে পারে</h4>
+<div class="row">
+    {% for r in related %}
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card product-card border-0 shadow-sm p-2">
+            <img src="{{ r.image }}" class="card-img-top" style="height: 140px; object-fit: cover;">
+            <div class="card-body p-1 mt-2">
+                <h6 class="fw-bold" style="font-size: 13px;">{{ r.name }}</h6>
+                <span class="text-danger fw-bold">৳ {{ r.sale_price|int }}</span>
+                <a href="/product/{{ r.id }}" class="btn btn-outline-danger btn-sm w-100 mt-2">দেখুন</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

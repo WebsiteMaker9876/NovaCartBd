@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-primary text-white p-4 rounded mb-4 text-center shadow-sm" style="background: linear-gradient(135deg, #0088cc, #005580)!important;">
+    <h2 class="fw-bold">Shop Smart, Live Better</h2>
+    <p class="mb-0">সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি গ্যাজেট ও লাইফস্টাইল প্রডাক্ট।</p>
+</div>
+
+<!-- Category Filter -->
+<div class="d-flex overflow-auto pb-2 mb-4 border-bottom">
+    <a href="/" class="btn btn-sm {% if not current_cat %}btn-primary{% else %}btn-outline-primary{% endif %} me-2">সকল প্রডাক্ট</a>
+    {% for cat in categories %}
+    <a href="/?category={{ cat.name }}" class="btn btn-sm {% if current_cat == cat.name %}btn-primary{% else %}btn-outline-primary{% endif %} me-2 text-nowrap">{{ cat.name }}</a>
+    {% endfor %}
+</div>
+
+<h4 class="fw-bold mb-3">পছন্দের প্রডাক্ট নির্বাচন করুন</h4>
+
+<div class="row">
+    {% for product in products %}
+    {% set discount = (((product.regular_price - product.sale_price) / product.regular_price) * 100)|int %}
+    <div class="col-6 col-md-3 mb-4">
+        <div class="card product-card h-100 border-0 shadow-sm position-relative">
+            <span class="badge-discount">-{{ discount }}%</span>
+            <a href="/product/{{ product.id }}">
+                <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
+            </a>
+            <div class="card-body d-flex flex-column p-2">
+                <small class="text-muted">কোড: {{ product.code }}</small>
+                <h6 class="card-title fw-bold text-dark mt-1" style="font-size: 14px; height: 38px; overflow: hidden;">{{ product.name }}</h6>
+                <div class="mt-auto">
+                    <div class="mb-2">
+                        <span class="price-sale">৳ {{ product.sale_price|int }}</span>
+                        <span class="price-regular">৳ {{ product.regular_price|int }}</span>
+                    </div>
+                    <a href="/product/{{ product.id }}" class="btn btn-order btn-sm"><i class="fa-solid fa-bolt"></i> অর্ডার করুন</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

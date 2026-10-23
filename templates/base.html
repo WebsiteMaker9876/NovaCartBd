@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaCart BD - Shop Smart, Live Better</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+        .top-bar { background-color: #0088cc; color: #fff; font-size: 14px; padding: 6px 0; }
+        .navbar-brand-custom { font-size: 24px; font-weight: bold; color: #e65100; text-decoration: none; }
+        .badge-discount { position: absolute; top: 10px; left: 10px; background-color: #e65100; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .product-card { transition: transform 0.2s; border-radius: 8px; overflow: hidden; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .price-sale { color: #e65100; font-weight: bold; font-size: 18px; }
+        .price-regular { text-decoration: line-through; color: #888; font-size: 14px; margin-left: 6px; }
+        .btn-order { background-color: #e65100; color: white; font-weight: bold; width: 100%; border: none; }
+        .btn-order:hover { background-color: #bf360c; color: white; }
+        footer { background-color: #212529; color: #aaa; padding: 30px 0; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <div class="top-bar text-center">
+        🚀 ক্যাশ অন ডেলিভারি সারা বাংলাদেশে! | 💬 হোয়াটসঅ্যাপ: +880 1568-022033
+    </div>
 
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
+        <div class="container">
+            <a class="navbar-brand-custom" href="/">🛒 NovaCart BD</a>
+            <div class="d-flex align-items-center">
+                <a href="/track" class="btn btn-outline-secondary me-2 btn-sm"><i class="fa-solid fa-truck-fast"></i> ট্র্যাকিং</a>
+                <a href="/admin" class="btn btn-dark btn-sm"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-1 fw-bold text-white">NovaCart BD - Shop Smart, Live Better.</p>
+            <p class="mb-2">💬 হোয়াটসঅ্যাপ: +880 1568-022033 | 📧 ইমেইল: support@novacartbd.com</p>
+            <small>© 2026 NovaCart BD. সর্বস্বত্ব সংরক্ষিত।</small>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

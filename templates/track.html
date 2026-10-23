@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-6 mx-auto">
+    <div class="card p-4 shadow-sm border-0">
+        <h4 class="fw-bold mb-3 text-center"><i class="fa-solid fa-truck-fast"></i> অর্ডার স্ট্যাটাস ট্র্যাক করুন</h4>
+        <form action="/track" method="POST" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="অর্ডার আইডি অথবা মোবাইল নম্বর দিন" required>
+                <button type="submit" class="btn btn-primary">খুঁজুন</button>
+            </div>
+        </form>
+
+        {% if searched %}
+            {% if order %}
+            <div class="alert alert-success">
+                <h5 class="fw-bold">অর্ডার আইডি: #{{ order.id }}</h5>
+                <p class="mb-1"><strong>কাস্টমার:</strong> {{ order.customer_name }}</p>
+                <p class="mb-1"><strong>পণ্য:</strong> {{ order.items_summary }}</p>
+                <p class="mb-1"><strong>মোট মূল্য:</strong> ৳ {{ order.total_price|int }}</p>
+                <p class="mb-0"><strong>বর্তমান স্ট্যাটাস:</strong> <span class="badge bg-warning text-dark">{{ order.status }}</span></p>
+            </div>
+            {% else %}
+            <div class="alert alert-danger text-center">কোনো অর্ডার পাওয়া যায়নি! সঠিক আইডি বা ফোন নম্বর দিন।</div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
