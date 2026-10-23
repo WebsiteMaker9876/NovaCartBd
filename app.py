@@ -311,7 +311,6 @@ def admin():
                 features = request.form.get('features')
                 description = request.form.get('description')
                 
-                # Handle Main Image Upload
                 image_url = request.form.get('image_url', '')
                 if 'image_file' in request.files:
                     file = request.files['image_file']
@@ -322,7 +321,6 @@ def admin():
                         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                         image_url = f"/static/uploads/{filename}"
 
-                # Handle Gallery Images Upload
                 gallery_list = []
                 if 'gallery_files' in request.files:
                     files = request.files.getlist('gallery_files')
@@ -355,12 +353,12 @@ def admin():
                 flash('ক্যাটাগরি যুক্ত করা হয়েছে!', 'success')
                 
             elif action == 'update_settings':
-                fields = ['site_name', 'tagline', 'header_banner_url', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
+                fields = ['site_name', 'tagline', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
                 for field in fields:
                     val = request.form.get(field, '')
                     conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
                 
-                # Logo upload handler
+                # Handle Logo Upload
                 if 'logo_file' in request.files:
                     file = request.files['logo_file']
                     if file and file.filename != '' and allowed_file(file.filename):
@@ -371,8 +369,22 @@ def admin():
                         logo_url = f"/static/uploads/{filename}"
                         conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('logo_url', logo_url))
 
+                # Handle Banner Upload (File Upload or Fallback URL)
+                banner_url = request.form.get('banner_url_text', '')
+                if 'banner_file' in request.files:
+                    file = request.files['banner_file']
+                    if file and file.filename != '' and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        filename = f"banner_{int(os.urandom(4).hex(), 16)}_{filename}"
+                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        banner_url = f"/static/uploads/{filename}"
+                
+                if banner_url:
+                    conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('header_banner_url', banner_url))
+
                 conn.commit()
-                flash('ওয়েবসাইট সেটিংস সফলভাবে সেভ করা হয়েছে!', 'success')
+                flash('ওয়েবসাইট সেটিংস ও ব্যানার সফলভাবে সেভ করা হয়েছে!', 'success')
                 
         return redirect(url_for('admin'))
         
