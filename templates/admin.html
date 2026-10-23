@@ -24,10 +24,10 @@
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট ও ল্যান্ডিং পেজ লিস্ট</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন ল্যান্ডিং পেজ যুক্ত করুন</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন ল্যান্ডিং পেজ ও ছবি আপলোড</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস & গুগল সার্চ কনসোল</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস & লোগো আপলোড</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#category">📁 ক্যাটাগরি ম্যানেজমেন্ট</button>
@@ -71,12 +71,12 @@
         </div>
       </div>
 
-      <!-- Site Settings & SEO Tab -->
+      <!-- Site Settings & Logo Upload Tab -->
       <div class="tab-pane fade" id="settings">
         <div class="col-md-9 mx-auto">
             <div class="card p-4 border shadow-sm rounded-3">
-                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং, হোয়াটসঅ্যাপ & গুগল কনসোল সেটিংস</h5>
-                <form action="/admin" method="POST">
+                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং, লোগো আপলোড & গুগল কনসোল</h5>
+                <form action="/admin" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update_settings">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -90,8 +90,14 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">লোগো ইউআরএল (Logo Image URL)</label>
-                        <input type="text" name="logo_url" class="form-control" value="{{ settings.logo_url }}">
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> সাইটের লোগো ছবি আপলোড করুন (Device থেকে)</label>
+                        <input type="file" name="logo_file" class="form-control" accept="image/*">
+                        {% if settings.logo_url %}
+                        <div class="mt-2">
+                            <small class="text-muted">বর্তমান লোগো:</small><br>
+                            <img src="{{ settings.logo_url }}" height="35" class="border rounded bg-light p-1">
+                        </div>
+                        {% endif %}
                     </div>
 
                     <div class="mb-3">
@@ -105,29 +111,28 @@
                             <input type="text" name="phone" class="form-control" value="{{ settings.phone }}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold text-success"><i class="fa-brands fa-whatsapp me-1"></i> হোয়াটসঅ্যাপ নম্বর (যেমন: +8801568022033)</label>
+                            <label class="form-label small fw-bold text-success"><i class="fa-brands fa-whatsapp me-1"></i> হোয়াটসঅ্যাপ নম্বর</label>
                             <input type="text" name="whatsapp" class="form-control" value="{{ settings.whatsapp }}">
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-danger"><i class="fa-brands fa-facebook me-1"></i> ফেসবুক পিক্সেল আইডি (Facebook Pixel ID)</label>
+                        <label class="form-label small fw-bold text-danger"><i class="fa-brands fa-facebook me-1"></i> ফেসবুক পিক্সেল আইডি</label>
                         <input type="text" name="fb_pixel_id" class="form-control" value="{{ settings.fb_pixel_id }}">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-primary"><i class="fa-brands fa-google me-1"></i> গুগল সার্চ কনসোল ভেরিফিকেশন কোড (Google Site Verification)</label>
-                        <input type="text" name="google_site_verification" class="form-control" placeholder="যেমন: abc123xyz_google_code" value="{{ settings.google_site_verification }}">
-                        <small class="text-muted">Google Search Console থেকে পাওয়া HTML Meta Tag-এর content ভ্যালুটি এখানে দিন।</small>
+                        <label class="form-label small fw-bold text-primary"><i class="fa-brands fa-google me-1"></i> গুগল সার্চ কনসোল ভেরিফিকেশন কোড</label>
+                        <input type="text" name="google_site_verification" class="form-control" value="{{ settings.google_site_verification }}">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-key me-1"></i> অ্যাডমিন পাসওয়ার্ড (Admin Password)</label>
+                        <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-key me-1"></i> অ্যাডমিন পাসওয়ার্ড</label>
                         <input type="text" name="admin_password" class="form-control fw-bold" value="{{ settings.admin_password }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">টপ নোটিশ টেক্সট (Top Notice Bar)</label>
+                        <label class="form-label small fw-bold">টপ নোটিশ টেক্সট</label>
                         <input type="text" name="notice_text" class="form-control" value="{{ settings.notice_text }}">
                     </div>
 
@@ -162,12 +167,12 @@
         </div>
       </div>
 
-      <!-- Add Product & Landing Page Tab -->
+      <!-- Add Product & Image Upload Tab -->
       <div class="tab-pane fade" id="add">
         <div class="col-md-9 mx-auto">
             <div class="card p-4 border shadow-sm rounded-3">
-                <h5 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-file-circle-plus me-2"></i>নতুন প্রডাক্ট ও কাস্টম ল্যান্ডিং পেজ তৈরি করুন</h5>
-                <form action="/admin" method="POST">
+                <h5 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-file-circle-plus me-2"></i>কম্পিউটার/মোবাইল থেকে সরাসরি ছবি আপলোড করে ল্যান্ডিং পেজ তৈরি করুন</h5>
+                <form action="/admin" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="add_product">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -185,7 +190,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">প্রডাক্টের নাম (টাইটেল অনুযায়ী স্বয়ংক্রিয় লিংক/Slug তৈরি হবে)</label>
+                        <label class="form-label small fw-bold">প্রডাক্টের নাম</label>
                         <input type="text" name="name" class="form-control fw-bold" placeholder="যেমন: Electric Small Duck Climbing Stairs Toy" required>
                     </div>
 
@@ -200,20 +205,22 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">মেইন কভার ছবির লিংক (Main Image URL)</label>
-                        <input type="text" name="image" class="form-control" placeholder="https://i.imgur.com/main.jpg" required>
+                    <div class="mb-3 bg-light p-3 border rounded">
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> ১. প্রধান কভার ছবি আপলোড করুন (Device থেকে ফাইল সিলেক্ট করুন)</label>
+                        <input type="file" name="image_file" class="form-control" accept="image/*">
+                        <small class="text-muted d-block mt-1">অথবা চাইলে ছবির ডিরেক্ট লিংকও নিচে দিতে পারেন:</small>
+                        <input type="text" name="image_url" class="form-control form-control-sm mt-1" placeholder="https://...">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> স্লাইডারের জন্য অতিরিক্ত ছবির লিংক (কমা দিয়ে আলাদা করুন)</label>
-                        <textarea name="gallery_images" class="form-control" rows="2" placeholder="https://i.imgur.com/img1.jpg, https://i.imgur.com/img2.jpg"></textarea>
-                        <small class="text-muted">ল্যান্ডিং পেজের শীর্ষে স্মুথ স্লাইডারে ছবিগুলো একা একাই পরিবর্তন হতে থাকবে।</small>
+                    <div class="mb-3 bg-light p-3 border rounded">
+                        <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> ২. স্লাইডারের জন্য একাধিক ছবি একসাথে সিলেক্ট করুন (Multiple Images)</label>
+                        <input type="file" name="gallery_files" class="form-control" accept="image/*" multiple>
+                        <small class="text-muted d-block mt-1">একাধিক ছবি সিলেক্ট করতে আপনার ডিভাইস থেকে একসাথে একাধিক ছবি মার্ক করুন।</small>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-success"><i class="fa-solid fa-list-check me-1"></i> প্রডাক্টের বিশেষ বৈশিষ্ট্য/হাইলাইটস (পাইপ | দিয়ে আলাদা করুন)</label>
-                        <input type="text" name="features" class="form-control" placeholder="যেমন: ১০০% অরিজিনাল|হাই কোয়ালিটি বিএসপিএ প্লাস্টিক|১ বছরের ওয়ারেন্টি">
+                        <input type="text" name="features" class="form-control" placeholder="যেমন: ১০০% অরিজিনাল|হাই কোয়ালিটি প্লাস্টিক|১ বছরের ওয়ারেন্টি">
                     </div>
 
                     <div class="mb-3">

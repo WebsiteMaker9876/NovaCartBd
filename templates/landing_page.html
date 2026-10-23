@@ -40,7 +40,6 @@
         .top-notice { background: #d32f2f; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
 
-        /* Smooth Premium Image Carousel Slider */
         .carousel-item img {
             max-height: 480px;
             object-fit: cover;
@@ -105,7 +104,6 @@
         <i class="fa-solid fa-fire me-2"></i> অফারটি সীমিত সময়ের জন্য! ক্যাশ অন ডেলিভারিতে অর্ডার করুন।
     </div>
 
-    <!-- Header with Clean WhatsApp Icon -->
     <div class="bg-white py-2 border-bottom">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="/" class="text-decoration-none">
@@ -122,10 +120,8 @@
     </div>
 
     <div class="container my-4">
-        <!-- Hero Section -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
             <div class="row align-items-center">
-                <!-- Premium Animated Carousel Image Slider -->
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <div id="productCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3500">
                         <div class="carousel-inner">
@@ -151,7 +147,6 @@
                     </div>
                 </div>
 
-                <!-- Product Details & Highlights -->
                 <div class="col-lg-6 ps-lg-4">
                     <span class="badge-offer mb-2 d-inline-block"><i class="fa-solid fa-tag me-1"></i> {{ product.category }} | কোড: {{ product.code }}</span>
                     <h1 class="fw-bold text-dark fs-2 mb-3">{{ product.name }}</h1>
@@ -185,13 +180,11 @@
             </div>
         </div>
 
-        <!-- Description Section -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
             <h4 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-circle-info me-2 text-danger"></i>প্রডাক্টের বিস্তারিত বিবরণ</h4>
             <p class="fs-5 text-secondary" style="line-height: 1.8; white-space: pre-line;">{{ product.description }}</p>
         </div>
 
-        <!-- Customer Reviews & Feedback Section -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
             <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                 <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-comments me-2 text-warning"></i>সম্মানিত কাস্টমারদের মতামত ও রিভিউ ({{ reviews|length }})</h4>
@@ -219,7 +212,6 @@
             {% endif %}
         </div>
 
-        <!-- High-Converting Fast Order Form -->
         <div id="orderFormSection" class="order-section-card my-5">
             <div class="text-center mb-4">
                 <h3 class="fw-bold text-danger"><i class="fa-solid fa-hand-holding-dollar me-2"></i>অর্ডার করতে নিচের ফরমটি পূরণ করুন</h3>
@@ -257,7 +249,6 @@
         </div>
     </div>
 
-    <!-- Review Modal -->
     <div class="modal fade" id="writeReviewModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -291,7 +282,6 @@
       </div>
     </div>
 
-    <!-- Mobile Sticky Order Button -->
     <div class="sticky-order-bar">
         <div>
             <span class="d-block text-danger fw-bold fs-5">৳ {{ product.sale_price|int }}</span>

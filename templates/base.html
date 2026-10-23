@@ -8,7 +8,6 @@
     <meta name="description" content="{% block meta_desc %}বাংলাদেশের অন্যতম বিশ্বস্ত ই-কমার্স শপ {{ site_settings.site_name }}। ক্যাশ অন ডেলিভারিতে অরিজিনাল প্রডাক্ট অর্ডার করুন।{% endblock %}">
 
     {% if site_settings.google_site_verification %}
-    <!-- Google Search Console Verification Meta Tag -->
     <meta name="google-site-verification" content="{{ site_settings.google_site_verification }}" />
     {% endif %}
 
@@ -45,7 +44,6 @@
         .brand-logo-img { max-height: 45px; object-fit: contain; }
         .brand-text { font-size: 26px; font-weight: 900; color: var(--primary-color); text-decoration: none; }
         
-        /* Premium WhatsApp Floating Button & Header Icon */
         .whatsapp-icon-btn {
             display: inline-flex;
             align-items: center;
@@ -75,7 +73,6 @@
             font-size: 30px;
         }
 
-        /* Redesigned Modern Responsive Grid Categories */
         .category-grid-box {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
@@ -144,7 +141,6 @@
         </div>
     </div>
 
-    <!-- Header with Clean WhatsApp Icon -->
     <header class="main-header sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="/" class="d-flex align-items-center text-decoration-none">
@@ -168,7 +164,6 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Floating WhatsApp Button -->
     <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn floating-wa-btn" title="Need Help? Chat on WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
