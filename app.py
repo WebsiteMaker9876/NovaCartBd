@@ -3,12 +3,20 @@ import sqlite3
 import re
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash, Response
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'novacart_pro_ultimate_secret_key_2026'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.path.join(basedir, 'novacart_pro.db')
+UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -105,7 +113,7 @@ def init_db():
             sample_products = [
                 ("NC-3622", "electric-duck-climbing-stairs-toy", "Electric Small Duck Climbing Stairs Toy", 1290.0, 850.0, "Toys", 
                  "https://images.unsplash.com/photo-1531651008558-ed1740375b39?w=800", 
-                 "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800,https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800,https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800",
+                 "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800,https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800",
                  "বাচ্চাদের আকর্ষনীয় মিউজিক ও লাইটিং|স্বয়ংক্রিয় সিঁড়ি বেয়ে ওঠার মজার খেলা|১০০% সেইফ ও প্রিমিয়াম প্লাস্টিক উপাদান|ব্যাটারি চালিত ও অত্যন্ত টেকসই",
                  "সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার বাচ্চার জন্য সেরা উপহার ট্রেন্ডি ডাক ক্লাইম্বিং টয়। এটি বাচ্চাদের মনোযোগ ও বুদ্ধি বৃদ্ধিতে সাহায্য করে।", 1, 1),
                 
@@ -113,21 +121,13 @@ def init_db():
                  "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=800", 
                  "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800,https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
                  "১৬টি ভিন্ন ধরনের কাটিং ও চপিং ব্লেড|স্টেইনলেস স্টিল মরিচারোধী ব্লেড|সহজে পরিষ্কারযোগ্য ও ডিশওয়াশার সেফ|রান্নার সময় বাঁচায় ৭০%",
-                 "Professional Kitchen Food Cutter with Stainless Steel Blades. আপনার রান্নাঘরের নিত্যদিনের কাজকে করুন সহজ ও দ্রুত।", 1, 1),
-
-                ("NC-12523", "anker-tws-ac-100-buds-pro-earbuds", "Anker TWS AC-100 Buds Pro Earbuds", 1190.0, 790.0, "Gadgets & Electronics", 
-                 "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800", 
-                 "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=800,https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
-                 "হাই রেস ক্রিস্টাল ক্লিয়ার সাউন্ড|এক চার্জে ৩০ ঘণ্টা ব্যাটারি ব্যাকআপ|একটিভ নয়েজ ক্যানসেলেশন (ANC)|ওয়াটারপ্রুফ IPX7 রেটিং",
-                 "Hi-Res Audio Certified True Wireless Earbuds. গান শোনা বা গেমিংয়ের জন্য সেরা সাউন্ড অভিজ্ঞতা।", 1, 1)
+                 "Professional Kitchen Food Cutter with Stainless Steel Blades. আপনার রান্নাঘরের নিত্যদিনের কাজকে করুন সহজ ও দ্রুত।", 1, 1)
             ]
             cursor.executemany("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
             
             sample_reviews = [
                 (1, "মোঃ আরমান হোসেন", 5, "পণ্যটি সত্যিই অনেক সুন্দর এবং বাচ্চার খুব পছন্দ হয়েছে। ধন্যবাদ ডেলিভারি ম্যান ভাইয়াকে।"),
-                (1, "সাবিহা রহমান", 5, "খুব দ্রুত ডেলিভারি পেয়েছি। প্রোডাক্টের কোয়ালিটি ১০০/১০০।"),
-                (2, "তানজিনা আক্তার", 5, "রান্নার সময় অনেক বেঁচে যায়! ব্লেডগুলো খুব ধারালো ও শক্তপোক্ত।"),
-                (3, "রাফসান আহমদ", 5, "সাউন্ড কোয়ালিটি ও বেস জাস্ট অসাধারণ! এই বাজেটে সেরা ইয়ারবাড।")
+                (2, "তানজিনা আক্তার", 5, "রান্নার সময় অনেক বেঁচে যায়! ব্লেডগুলো খুব ধারালো ও শক্তপোক্ত।")
             ]
             cursor.executemany("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)", sample_reviews)
 
@@ -257,7 +257,6 @@ def track_order():
             order = conn.execute("SELECT * FROM orders WHERE id = ? OR phone = ?", (query, query)).fetchone()
     return render_template('track.html', order=order, searched=searched)
 
-# Dynamic Sitemap.xml for Google Search Console (Fixed String Formatting)
 @app.route('/sitemap.xml')
 def sitemap():
     host = request.host_url.rstrip('/')
@@ -266,21 +265,13 @@ def sitemap():
     
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    
-    # Homepage
     xml += f'  <url><loc>{host}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n'
-    
-    # Track Page
     xml += f'  <url><loc>{host}/track</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
-    
-    # Products Landing Pages
     for p in products:
         xml += f'  <url><loc>{host}/p/{p["slug"]}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n'
-        
     xml += '</urlset>'
     return Response(xml, mimetype='application/xml')
 
-# Dynamic Robots.txt for Search Engines
 @app.route('/robots.txt')
 def robots():
     host = request.host_url.rstrip('/')
@@ -317,17 +308,44 @@ def admin():
                 regular_price = float(request.form.get('regular_price'))
                 sale_price = float(request.form.get('sale_price'))
                 category = request.form.get('category')
-                image = request.form.get('image')
-                gallery_images = request.form.get('gallery_images')
                 features = request.form.get('features')
                 description = request.form.get('description')
-                is_new = 1 if request.form.get('is_new') else 0
-                is_top = 1 if request.form.get('is_top') else 0
                 
-                conn.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                             (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top))
+                # Handle Main Image Upload
+                image_url = request.form.get('image_url', '')
+                if 'image_file' in request.files:
+                    file = request.files['image_file']
+                    if file and file.filename != '' and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        filename = f"main_{int(os.urandom(4).hex(), 16)}_{filename}"
+                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        image_url = f"/static/uploads/{filename}"
+
+                # Handle Gallery Images Upload
+                gallery_list = []
+                if 'gallery_files' in request.files:
+                    files = request.files.getlist('gallery_files')
+                    for file in files:
+                        if file and file.filename != '' and allowed_file(file.filename):
+                            filename = secure_filename(file.filename)
+                            filename = f"gallery_{int(os.urandom(4).hex(), 16)}_{filename}"
+                            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                            gallery_list.append(f"/static/uploads/{filename}")
+                
+                extra_gallery = request.form.get('gallery_images_text', '')
+                if extra_gallery:
+                    for g in extra_gallery.split(','):
+                        if g.strip():
+                            gallery_list.append(g.strip())
+                            
+                gallery_images_str = ','.join(gallery_list)
+
+                conn.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                             (code, slug, name, regular_price, sale_price, category, image_url, gallery_images_str, features, description))
                 conn.commit()
-                flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে যুক্ত করা হয়েছে!', 'success')
+                flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে ছবি আপলোডসহ তৈরি করা হয়েছে!', 'success')
                 
             elif action == 'add_category':
                 cat_name = request.form.get('cat_name')
@@ -337,10 +355,22 @@ def admin():
                 flash('ক্যাটাগরি যুক্ত করা হয়েছে!', 'success')
                 
             elif action == 'update_settings':
-                fields = ['site_name', 'tagline', 'logo_url', 'header_banner_url', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
+                fields = ['site_name', 'tagline', 'header_banner_url', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
                 for field in fields:
                     val = request.form.get(field, '')
                     conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
+                
+                # Logo upload handler
+                if 'logo_file' in request.files:
+                    file = request.files['logo_file']
+                    if file and file.filename != '' and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        filename = f"logo_{int(os.urandom(4).hex(), 16)}_{filename}"
+                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        logo_url = f"/static/uploads/{filename}"
+                        conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('logo_url', logo_url))
+
                 conn.commit()
                 flash('ওয়েবসাইট সেটিংস সফলভাবে সেভ করা হয়েছে!', 'success')
                 
