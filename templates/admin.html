@@ -21,10 +21,10 @@
         <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 কাস্টমার অর্ডারসমূহ ({{ orders|length }})</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট লিস্ট</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট ও ল্যান্ডিং পেজ লিস্ট</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন প্রডাক্ট যোগ</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন ল্যান্ডিং পেজ যুক্ত করুন</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস (লোগো/ব্যানার/পাসওয়ার্ড/পিক্সেল)</button>
@@ -91,19 +91,12 @@
                     
                     <div class="mb-3">
                         <label class="form-label small fw-bold">লোগো ইউআরএল (Logo Image URL)</label>
-                        <input type="text" name="logo_url" class="form-control" placeholder="যেমন: https://i.imgur.com/your-logo.png" value="{{ settings.logo_url }}">
-                        <small class="text-muted">লোগোর লিংক না দিলে নাম টেক্সট আকারে দেখাবে।</small>
+                        <input type="text" name="logo_url" class="form-control" value="{{ settings.logo_url }}">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">হেডার অফার ব্যানার ইউআরএল (Header Banner URL)</label>
-                        <input type="text" name="header_banner_url" class="form-control" placeholder="যেমন: https://i.imgur.com/banner.jpg" value="{{ settings.header_banner_url }}">
-                        <small class="text-muted">হোমপেজের শীর্ষে বড় ব্যানার হিসেবে দেখাবে।</small>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">ব্যানার ক্লিক লিংক (Optional)</label>
-                        <input type="text" name="banner_link" class="form-control" value="{{ settings.banner_link }}">
+                        <label class="form-label small fw-bold">হেডার অফার ব্যানার ইউআরএল</label>
+                        <input type="text" name="header_banner_url" class="form-control" value="{{ settings.header_banner_url }}">
                     </div>
 
                     <div class="row">
@@ -119,14 +112,12 @@
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-danger"><i class="fa-brands fa-facebook me-1"></i> ফেসবুক পিক্সেল আইডি (Facebook Pixel ID)</label>
-                        <input type="text" name="fb_pixel_id" class="form-control" placeholder="যেমন: 123456789012345" value="{{ settings.fb_pixel_id }}">
-                        <small class="text-muted">ফেসবুক এড চালানোর জন্য পিক্সেল আইডি দিলে সেলস ও কনভার্সন ট্র্যাক হবে।</small>
+                        <input type="text" name="fb_pixel_id" class="form-control" value="{{ settings.fb_pixel_id }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-key me-1"></i> অ্যাডমিন পাসওয়ার্ড (Admin Password)</label>
                         <input type="text" name="admin_password" class="form-control fw-bold" value="{{ settings.admin_password }}" required>
-                        <small class="text-danger">এই পাসওয়ার্ড দিয়ে শুধু আপনি অ্যাডমিনে ঢুকতে পারবেন।</small>
                     </div>
 
                     <div class="mb-3">
@@ -142,24 +133,21 @@
 
       <!-- Products Tab -->
       <div class="tab-pane fade" id="products">
-        <h5 class="fw-bold mb-3">স্টকে থাকা প্রডাক্টসমূহ</h5>
+        <h5 class="fw-bold mb-3">স্টকে থাকা প্রডাক্ট ও ল্যান্ডিং পেজসমূহ</h5>
         <div class="table-responsive">
             <table class="table align-middle border">
                 <thead>
-                    <tr><th>ছবি</th><th>কোড</th><th>নাম</th><th>দাম</th><th>ক্যাটাগরি</th><th>সেকশন</th><th>অ্যাকশন</th></tr>
+                    <tr><th>ছবি</th><th>কোড</th><th>নাম ও লিংক (Slug)</th><th>দাম</th><th>ক্যাটাগরি</th><th>ল্যান্ডিং পেজ লিংক</th><th>অ্যাকশন</th></tr>
                 </thead>
                 <tbody>
                     {% for p in products %}
                     <tr>
-                        <td><img src="{{ p.image }}" width="40" height="40" style="object-fit:cover; border-radius:4px;"></td>
+                        <td><img src="{{ p.image }}" width="45" height="45" style="object-fit:cover; border-radius:6px;"></td>
                         <td>{{ p.code }}</td>
-                        <td>{{ p.name }}</td>
+                        <td><strong>{{ p.name }}</strong><br><small class="text-muted">/p/{{ p.slug }}</small></td>
                         <td><span class="text-danger fw-bold">৳{{ p.sale_price|int }}</span> <del class="text-muted small">৳{{ p.regular_price|int }}</del></td>
                         <td><span class="badge bg-secondary">{{ p.category }}</span></td>
-                        <td>
-                            {% if p.is_new %}<span class="badge bg-danger">New</span>{% endif %}
-                            {% if p.is_top %}<span class="badge bg-primary">Top</span>{% endif %}
-                        </td>
+                        <td><a href="/p/{{ p.slug }}" target="_blank" class="btn btn-sm btn-outline-danger fw-bold"><i class="fa-solid fa-arrow-up-right-from-square me-1"></i> দেখুন</a></td>
                         <td><a href="/admin/delete_product/{{ p.id }}" class="btn btn-danger btn-sm py-0" onclick="return confirm('ডিলিট করতে চান?')">ডিলিট</a></td>
                     </tr>
                     {% endfor %}
@@ -168,60 +156,66 @@
         </div>
       </div>
 
-      <!-- Add Product Tab -->
+      <!-- Add Product & Landing Page Tab -->
       <div class="tab-pane fade" id="add">
-        <div class="col-md-8 mx-auto">
-            <div class="card p-4 border shadow-sm">
-                <h5 class="fw-bold mb-3">নতুন প্রডাক্ট যোগ করুন</h5>
+        <div class="col-md-9 mx-auto">
+            <div class="card p-4 border shadow-sm rounded-3">
+                <h5 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-file-circle-plus me-2"></i>নতুন প্রডাক্ট ও কাস্টম ল্যান্ডিং পেজ তৈরি করুন</h5>
                 <form action="/admin" method="POST">
                     <input type="hidden" name="action" value="add_product">
                     <div class="row">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold">প্রডাক্ট কোড</label>
-                            <input type="text" name="code" class="form-control form-control-sm" placeholder="যেমন: NC-101" required>
+                            <input type="text" name="code" class="form-control" placeholder="যেমন: NC-501" required>
                         </div>
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-6 mb-3">
                             <label class="form-label small fw-bold">ক্যাটাগরি</label>
-                            <select name="category" class="form-select form-select-sm" required>
+                            <select name="category" class="form-select" required>
                                 {% for c in categories %}
                                 <option value="{{ c.name }}">{{ c.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">প্রডাক্টের নাম</label>
-                        <input type="text" name="name" class="form-control form-control-sm" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label small fw-bold">নিয়মিত মূল্য (Regular Price)</label>
-                            <input type="number" step="any" name="regular_price" class="form-control form-control-sm" required>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                            <label class="form-label small fw-bold">অফার মূল্য (Sale Price)</label>
-                            <input type="number" step="any" name="sale_price" class="form-control form-control-sm" required>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label small fw-bold">ছবির লিংক (Image URL)</label>
-                        <input type="text" name="image" class="form-control form-control-sm" required>
-                    </div>
+
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">বিবরণ</label>
-                        <textarea name="description" class="form-control form-control-sm" rows="2"></textarea>
+                        <label class="form-label small fw-bold">প্রডাক্টের নাম (টাইটেল অনুযায়ী স্বয়ংক্রিয় লিংক/Slug তৈরি হবে)</label>
+                        <input type="text" name="name" class="form-control fw-bold" placeholder="যেমন: Electric Small Duck Climbing Stairs Toy" required>
                     </div>
-                    <div class="mb-3 d-flex gap-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_new" value="1" id="isNew" checked>
-                            <label class="form-check-label small" for="isNew">New Arrival-এ দেখাবে</label>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">নিয়মিত মূল্য (Regular Price)</label>
+                            <input type="number" step="any" name="regular_price" class="form-control" required>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_top" value="1" id="isTop">
-                            <label class="form-check-label small" for="isTop">Top Selling-এ দেখাবে</label>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">অফার মূল্য (Sale Price)</label>
+                            <input type="number" step="any" name="sale_price" class="form-control" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold">প্রডাক্ট সেভ করুন</button>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">মেইন কভার ছবির লিংক (Main Image URL)</label>
+                        <input type="text" name="image" class="form-control" placeholder="https://i.imgur.com/main.jpg" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> একাধিক ছবি/গ্যালারি ছবির লিংক (কমা দিয়ে আলাদা করুন)</label>
+                        <textarea name="gallery_images" class="form-control" rows="2" placeholder="https://i.imgur.com/img1.jpg, https://i.imgur.com/img2.jpg, https://i.imgur.com/img3.jpg"></textarea>
+                        <small class="text-muted">ল্যান্ডিং পেজে গ্রাহকরা এই ছবিগুলো গ্যালারি ও আসল ফটো হিসেবে দেখতে পাবে।</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-list-check me-1"></i> প্রডাক্টের বিশেষ বৈশিষ্ট্য/হাইলাইটস (পাইপ | দিয়ে আলাদা করুন)</label>
+                        <input type="text" name="features" class="form-control" placeholder="যেমন: ১০০% অরিজিনাল|হাই কোয়ালিটি বিএসপিএ প্লাস্টিক|১ বছরের ওয়ারেন্টি">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">প্রডাক্টের বিস্তারিত বিবরণ (Description)</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="প্রডাক্টের বিস্তারিত বিবরণ লিখুন..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold"><i class="fa-solid fa-check me-1"></i> ল্যান্ডিং পেজ পাবলিশ করুন</button>
                 </form>
             </div>
         </div>
@@ -236,11 +230,11 @@
                     <input type="hidden" name="action" value="add_category">
                     <div class="mb-2">
                         <label class="form-label small fw-bold">ক্যাটাগরির নাম</label>
-                        <input type="text" name="cat_name" class="form-control form-control-sm" placeholder="যেমন: Organic Food" required>
+                        <input type="text" name="cat_name" class="form-control" placeholder="যেমন: Organic Food" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">FontAwesome আইকন ক্লাস</label>
-                        <input type="text" name="icon" class="form-control form-control-sm" placeholder="যেমন: fa-leaf" value="fa-tags">
+                        <input type="text" name="icon" class="form-control" placeholder="যেমন: fa-leaf" value="fa-tags">
                     </div>
                     <button type="submit" class="btn btn-primary w-100 fw-bold">ক্যাটাগরি সেভ করুন</button>
                 </form>

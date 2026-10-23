@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- SEO Meta Tags -->
     <title>{% block title %}{{ site_settings.site_name }} - {{ site_settings.tagline }}{% endblock %}</title>
     <meta name="description" content="{% block meta_desc %}বাংলাদেশের অন্যতম বিশ্বস্ত ই-কমার্স শপ {{ site_settings.site_name }}। ক্যাশ অন ডেলিভারিতে অরিজিনাল প্রডাক্ট অর্ডার করুন।{% endblock %}">
-    <meta name="keywords" content="e-commerce, online shopping bd, novacart, gadgets, cash on delivery bd">
 
-    <!-- Open Graph (OG) Meta Tags for Facebook Link Sharing -->
     <meta property="og:site_name" content="{{ site_settings.site_name }}">
     <meta property="og:title" content="{% block og_title %}{{ site_settings.site_name }} - {{ site_settings.tagline }}{% endblock %}">
     <meta property="og:description" content="{% block og_desc %}সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি গ্যাজেট ও লাইফস্টাইল প্রডাক্ট।{% endblock %}">
@@ -19,7 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Facebook Pixel Code -->
     {% if site_settings.fb_pixel_id %}
     <script>
       !function(f,b,e,v,n,t,s)
@@ -44,7 +40,6 @@
         .brand-logo-img { max-height: 45px; object-fit: contain; }
         .brand-text { font-size: 26px; font-weight: 900; color: var(--primary-color); text-decoration: none; }
         
-        /* Category Pills Mobile Scroll */
         .category-scroll-container { display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 5px; }
         .category-scroll-container::-webkit-scrollbar { display: none; }
         .cat-pill { white-space: nowrap; border-radius: 30px; padding: 8px 18px; font-weight: 600; font-size: 13px; transition: 0.3s; }
@@ -55,17 +50,13 @@
         .price-sale { color: var(--primary-color); font-weight: 800; font-size: 18px; }
         .price-regular { text-decoration: line-through; color: #999; font-size: 12px; margin-left: 5px; }
         
-        .btn-order-now { background: linear-gradient(135deg, #ff5722, #f4511e); color: #ffffff; font-weight: 700; border-radius: 8px; border: none; width: 100%; padding: 8px 0; }
+        .btn-order-now { background: linear-gradient(135deg, #ff5722, #f4511e); color: #ffffff; font-weight: 700; border-radius: 8px; border: none; width: 100%; padding: 10px 0; }
         .btn-order-now:hover { background: linear-gradient(135deg, #e64a19, #d84315); color: #fff; }
-
-        .hero-banner-box { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 25px; }
-        .hero-banner-img { width: 100%; max-height: 380px; object-fit: cover; }
 
         footer { background-color: var(--dark-color); color: #a0a5b5; padding: 40px 0 20px 0; margin-top: 60px; }
         footer h6 { color: #ffffff; font-weight: 700; }
         footer a { color: #a0a5b5; text-decoration: none; }
 
-        /* Mobile Footer Bar - Hidden Admin Link */
         .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e0e0e0; z-index: 9999; padding: 8px 0; }
         @media (max-width: 768px) {
             .mobile-nav { display: flex; justify-content: space-around; }
@@ -81,7 +72,6 @@
         </div>
     </div>
 
-    <!-- Header (Admin link removed from Navbar) -->
     <header class="main-header sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="/" class="d-flex align-items-center text-decoration-none">
@@ -130,7 +120,6 @@
         </div>
     </footer>
 
-    <!-- Mobile Navigation (Admin Link Removed) -->
     <div class="mobile-nav">
         <a href="/" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-house d-block fs-5 text-danger"></i> Home</a>
         <a href="/track" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-truck-fast d-block fs-5 text-primary"></i> Track</a>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - বিশেষ অফার | {{ site_settings.site_name }}</title>
+    <meta name="description" content="{{ product.description[:160] }}">
+
+    <!-- Open Graph for Facebook Ads -->
+    <meta property="og:site_name" content="{{ site_settings.site_name }}">
+    <meta property="og:title" content="{{ product.name }} - ৳{{ product.sale_price|int }}">
+    <meta property="og:description" content="{{ product.description[:150] }}">
+    <meta property="og:image" content="{{ product.image }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% if site_settings.fb_pixel_id %}
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '{{ site_settings.fb_pixel_id }}');
+      fbq('track', 'PageView');
+    </script>
+    {% endif %}
+
+    <style>
+        :root { --primary-color: #d32f2f; --secondary-color: #ff5722; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; color: #222; }
+        
+        .top-notice { background: #d32f2f; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+
+        .landing-hero { background: #ffffff; border-bottom: 2px solid #eee; padding: 30px 0; }
+        .product-main-img { max-height: 480px; object-fit: cover; border-radius: 16px; border: 2px solid #eee; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .thumb-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd; cursor: pointer; transition: 0.2s; }
+        .thumb-img:hover, .thumb-img.active { border-color: #d32f2f; transform: scale(1.05); }
+
+        .badge-offer { background: #e53935; color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: bold; }
+        .price-tag { font-size: 34px; font-weight: 900; color: #d32f2f; }
+        .old-price { font-size: 20px; text-decoration: line-through; color: #888; margin-left: 10px; }
+
+        .feature-box { background: #fff3e0; border-left: 5px solid #ff5722; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .feature-item { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; }
+
+        .order-section-card { background: #ffffff; border: 3px solid #d32f2f; border-radius: 16px; box-shadow: 0 12px 35px rgba(211,47,47,0.15); padding: 25px; }
+
+        .btn-order-landing { background: linear-gradient(135deg, #d32f2f, #f4511e); color: #fff; font-size: 22px; font-weight: 800; border-radius: 10px; padding: 15px 0; width: 100%; border: none; text-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: 0.3s; }
+        .btn-order-landing:hover { background: linear-gradient(135deg, #b71c1c, #d84315); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(211,47,47,0.4); }
+
+        .trust-badge { background: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px; text-align: center; color: #2e7d32; font-weight: 700; font-size: 14px; }
+        
+        .sticky-order-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 2px solid #d32f2f; padding: 10px 15px; z-index: 99999; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        @media (max-width: 768px) {
+            .sticky-order-bar { display: flex; align-items: center; justify-content: space-between; }
+            body { padding-bottom: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="top-notice text-center">
+        <i class="fa-solid fa-fire me-2"></i> অফারটি সীমিত সময়ের জন্য! ক্যাশ অন ডেলিভারিতে অর্ডার করুন।
+    </div>
+
+    <!-- Header Logo / Call Bar -->
+    <div class="bg-white py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="/" class="text-decoration-none">
+                {% if site_settings.logo_url %}
+                <img src="{{ site_settings.logo_url }}" height="40" alt="{{ site_settings.site_name }}">
+                {% else %}
+                <span class="fs-3 fw-bold text-danger">🛒 {{ site_settings.site_name }}</span>
+                {% endif %}
+            </a>
+            <a href="tel:{{ site_settings.phone }}" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-phone me-1"></i> {{ site_settings.phone }}</a>
+        </div>
+    </div>
+
+    <div class="container my-4">
+        <!-- Hero Section -->
+        <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
+            <div class="row align-items-center">
+                <!-- Gallery Images Section -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img id="mainProductImage" src="{{ product.image }}" class="product-main-img mb-3" alt="{{ product.name }}">
+                    
+                    {% if gallery %}
+                    <div class="d-flex gap-2 overflow-auto pb-2 justify-content-center">
+                        <img src="{{ product.image }}" class="thumb-img active" onclick="changeImage(this.src, this)">
+                        {% for g_img in gallery %}
+                        <img src="{{ g_img }}" class="thumb-img" onclick="changeImage(this.src, this)">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Details & Highlights -->
+                <div class="col-lg-6 ps-lg-4">
+                    <span class="badge-offer mb-2 d-inline-block"><i class="fa-solid fa-tag me-1"></i> {{ product.category }} | কোড: {{ product.code }}</span>
+                    <h1 class="fw-bold text-dark fs-2 mb-3">{{ product.name }}</h1>
+
+                    <div class="mb-3 d-flex align-items-center">
+                        <span class="price-tag">৳ {{ product.sale_price|int }}</span>
+                        <span class="old-price">৳ {{ product.regular_price|int }}</span>
+                        <span class="badge bg-success ms-3 px-3 py-2 fs-6">স্টকে আছে</span>
+                    </div>
+
+                    {% if features %}
+                    <div class="feature-box mb-4">
+                        <h6 class="fw-bold text-danger mb-2"><i class="fa-solid fa-circle-check me-1"></i> এই প্রডাক্টের বিশেষ বৈশিষ্ট্যসমূহ:</h6>
+                        {% for feat in features %}
+                        <div class="feature-item"><i class="fa-solid fa-check text-success me-2"></i> {{ feat }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <a href="#orderFormSection" class="btn btn-order-landing shadow mb-3"><i class="fa-solid fa-cart-shopping me-2"></i> এখনই অর্ডার করুন (৳{{ product.sale_price|int }})</a>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="trust-badge"><i class="fa-solid fa-truck-fast fs-5 d-block mb-1 text-danger"></i> ক্যাশ অন ডেলিভারি</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="trust-badge"><i class="fa-solid fa-rotate-left fs-5 d-block mb-1 text-primary"></i> ৩ দিনের ফ্রি রিটার্ন</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
+            <h4 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-circle-info me-2 text-danger"></i>প্রডাক্টের বিস্তারিত বিবরণ</h4>
+            <p class="fs-5 text-secondary" style="line-height: 1.8; white-space: pre-line;">{{ product.description }}</p>
+        </div>
+
+        <!-- Multi Photo Highlight Section -->
+        {% if gallery %}
+        <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
+            <h4 class="fw-bold text-dark text-center mb-4"><i class="fa-solid fa-images me-2 text-danger"></i>প্রডাক্টের আসল ছবি ও গ্যালাভিউ</h4>
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                {% for g_img in gallery %}
+                <div class="col text-center">
+                    <img src="{{ g_img }}" class="img-fluid rounded-3 border shadow-sm w-100" style="max-height: 320px; object-fit: cover;">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- High-Converting Fast Order Form -->
+        <div id="orderFormSection" class="order-section-card my-5">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-danger"><i class="fa-solid fa-hand-holding-dollar me-2"></i>অর্ডার করতে নিচের ফরমটি পূরণ করুন</h3>
+                <p class="text-muted fw-semibold mb-0">কোনো অগ্রিম টাকা দেওয়া লাগবে না। প্রডাক্ট হাতে পেয়ে টাকা পরিশোধ করবেন।</p>
+            </div>
+
+            <form action="/quick_order/{{ product.id }}" method="POST" onsubmit="trackPixelOrder('{{ product.name }}', {{ product.sale_price }})">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">আপনার নাম *</label>
+                        <input type="text" name="name" class="form-control form-control-lg border-2" placeholder="আপনার পূর্ণ নাম লিখুন" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">মোবাইল নম্বর *</label>
+                        <input type="tel" name="phone" class="form-control form-control-lg border-2" placeholder="০১৭xxxxxxxx" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">সম্পূর্ণ ঠিকানা *</label>
+                    <textarea name="address" class="form-control form-control-lg border-2" rows="2" placeholder="বাসা নম্বর, গ্রাম/মহল্লা, থানা ও জেলা" required></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">ডেলিভারি এলাকা নির্বাচন করুন *</label>
+                    <select name="area" class="form-select form-select-lg border-2 fw-semibold text-danger" required>
+                        <option value="dhaka_inside">ঢাকা সিটি (৬০ টাকা)</option>
+                        <option value="dhaka_sub">ঢাকা সাব এরিয়া (১০০ টাকা)</option>
+                        <option value="outside_dhaka">ঢাকার বাইরে (১২০ টাকা)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-order-landing fs-3 py-3 shadow"><i class="fa-solid fa-circle-check me-2"></i> অর্ডার নিশ্চিত করুন (৳{{ product.sale_price|int }})</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Sticky Order Button -->
+    <div class="sticky-order-bar">
+        <div>
+            <span class="d-block text-danger fw-bold fs-5">৳ {{ product.sale_price|int }}</span>
+            <small class="text-muted">ক্যাশ অন ডেলিভারি</small>
+        </div>
+        <a href="#orderFormSection" class="btn btn-danger fw-bold rounded-pill px-4 py-2"><i class="fa-solid fa-bolt me-1"></i> অর্ডার করুন</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-1 fw-bold">{{ site_settings.site_name }} - {{ site_settings.tagline }}</p>
+            <small class="text-muted">© 2026 All Rights Reserved.</small>
+        </div>
+    </footer>
+
+    <script>
+        function changeImage(src, element) {
+            document.getElementById('mainProductImage').src = src;
+            document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function trackPixelOrder(productName, price) {
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {content_name: productName, value: price, currency: 'BDT'});
+            }
+        }
+    </script>
+</body>
+</html>

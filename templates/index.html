@@ -5,14 +5,13 @@
 {% block content %}
 
 {% if site_settings.header_banner_url %}
-<div class="hero-banner-box">
+<div class="hero-banner-box rounded-3 overflow-hidden shadow-sm mb-4">
     <a href="{{ site_settings.banner_link }}">
-        <img src="{{ site_settings.header_banner_url }}" alt="Offer Banner" class="hero-banner-img">
+        <img src="{{ site_settings.header_banner_url }}" alt="Offer Banner" class="w-100" style="max-height: 380px; object-fit: cover;">
     </a>
 </div>
 {% endif %}
 
-<!-- Mobile-Friendly Category Pills -->
 <div class="bg-white p-3 rounded-3 shadow-sm mb-4 border">
     <div class="d-flex align-items-center justify-content-between mb-2">
         <h6 class="fw-bold m-0 text-uppercase text-secondary" style="font-size: 13px;">ক্যাটাগরি সমূহ</h6>
@@ -28,33 +27,33 @@
     </div>
 </div>
 
-{% if new_products %}
+{% if products %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="fw-bold m-0 text-dark border-start border-4 border-danger ps-2">🔥 ধামাকা অফার / New Arrival</h5>
+    <h5 class="fw-bold m-0 text-dark border-start border-4 border-danger ps-2">🔥 ট্রেন্ডিং প্রডাক্টস & ল্যান্ডিং পেজসমূহ</h5>
 </div>
 
 <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3 mb-5">
-    {% for p in new_products %}
+    {% for p in products %}
     {% set discount = (((p.regular_price - p.sale_price) / p.regular_price) * 100)|int %}
     <div class="col">
         <div class="card product-card h-100">
             {% if discount > 0 %}
             <span class="badge-discount">-{{ discount }}%</span>
             {% endif %}
-            <a href="/product/{{ p.id }}">
-                <img src="{{ p.image }}" class="card-img-top p-2" style="height: 170px; object-fit: cover; border-radius: 12px;">
+            <a href="/p/{{ p.slug }}">
+                <img src="{{ p.image }}" class="card-img-top p-2" style="height: 180px; object-fit: cover; border-radius: 12px;">
             </a>
             <div class="card-body p-2 d-flex flex-column">
                 <small class="text-muted" style="font-size: 11px;">কোড: {{ p.code }}</small>
                 <h6 class="fw-bold text-dark mt-1" style="font-size: 13px; height: 36px; overflow: hidden;">
-                    <a href="/product/{{ p.id }}" class="text-dark text-decoration-none">{{ p.name }}</a>
+                    <a href="/p/{{ p.slug }}" class="text-dark text-decoration-none">{{ p.name }}</a>
                 </h6>
                 <div class="mt-auto">
                     <div class="my-1">
                         <span class="price-sale">৳{{ p.sale_price|int }}</span>
                         <span class="price-regular">৳{{ p.regular_price|int }}</span>
                     </div>
-                    <a href="/product/{{ p.id }}" class="btn btn-order-now btn-sm mt-1"><i class="fa-solid fa-bolt me-1"></i> অর্ডার করুন</a>
+                    <a href="/p/{{ p.slug }}" class="btn btn-order-now btn-sm mt-1"><i class="fa-solid fa-eye me-1"></i> ল্যান্ডিং পেজ দেখুন</a>
                 </div>
             </div>
         </div>
