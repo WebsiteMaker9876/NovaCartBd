@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - {{ site_settings.site_name }}{% endblock %}
+{% block meta_desc %}{{ product.name }} মাত্র ৳{{ product.sale_price|int }} টাকায় ক্যাশ অন ডেলিভারিতে অর্ডার করুন {{ site_settings.site_name }}-এ।{% endblock %}
+
+{% block og_title %}{{ product.name }} - ৳{{ product.sale_price|int }}{% endblock %}
+{% block og_desc %}{{ product.description[:150] }}{% endblock %}
+{% block og_image %}{{ product.image }}{% endblock %}
+
 {% block content %}
 <div class="bg-white p-4 rounded-3 shadow-sm border mb-4">
     <div class="row">
         <div class="col-md-5 mb-4 mb-md-0">
-            <img src="{{ product.image }}" class="img-fluid rounded-3 border w-100 shadow-sm" style="max-height: 400px; object-fit: cover;">
+            <img src="{{ product.image }}" class="img-fluid rounded-3 border w-100 shadow-sm" style="max-height: 400px; object-fit: cover;" alt="{{ product.name }}">
         </div>
 
         <div class="col-md-7">
             <span class="badge bg-danger mb-2 px-3 py-2 fs-6">{{ product.category }} | কোড: {{ product.code }}</span>
-            <h3 class="fw-bold text-dark">{{ product.name }}</h3>
+            <h1 class="fw-bold text-dark fs-3">{{ product.name }}</h1>
             
             <div class="my-3">
                 <span class="fs-2 fw-bold text-danger">৳ {{ product.sale_price|int }}</span>
@@ -17,10 +25,9 @@
 
             <p class="text-secondary small mb-4">{{ product.description }}</p>
             
-            <!-- Fast Order Form for FB Ads Conversion -->
             <div class="card p-3 border-danger bg-light rounded-3">
                 <h5 class="fw-bold text-danger mb-3"><i class="fa-solid fa-truck-fast me-2"></i> দ্রুত অর্ডার করতে নিচের তথ্যগুলো দিন (ক্যাশ অন ডেলিভারি)</h5>
-                <form action="/quick_order/{{ product.id }}" method="POST" onsubmit="trackPixelOrder('{{ product.name }}', {{ product.sale_price }})">
+                <form action="/quick_order/{{ product.id }}" method="POST">
                     <div class="mb-2">
                         <label class="form-label small fw-bold">আপনার নাম *</label>
                         <input type="text" name="name" class="form-control" placeholder="আপনার পূর্ণ নাম" required>
@@ -47,22 +54,4 @@
         </div>
     </div>
 </div>
-
-{% if related %}
-<h5 class="fw-bold mb-3 text-dark">আপনার পছন্দ হতে পারে (Related Products)</h5>
-<div class="row row-cols-2 row-cols-md-4 g-3">
-    {% for r in related %}
-    <div class="col">
-        <div class="card product-card h-100 p-2">
-            <img src="{{ r.image }}" class="card-img-top" style="height: 140px; object-fit: cover; border-radius: 8px;">
-            <div class="card-body p-1 mt-2 text-center">
-                <h6 class="fw-bold text-truncate" style="font-size: 13px;">{{ r.name }}</h6>
-                <div class="text-danger fw-bold">৳{{ r.sale_price|int }}</div>
-                <a href="/product/{{ r.id }}" class="btn btn-outline-danger btn-sm w-100 mt-2 py-1 fs-6">দেখুন</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
 {% endblock %}
