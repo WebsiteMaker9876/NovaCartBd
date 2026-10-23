@@ -16,7 +16,6 @@ def get_db():
 
 def init_db():
     with get_db() as conn:
-        # Settings table for Site Logo, Banner, Phone, Admin Password, Facebook Pixel, etc.
         conn.execute('''
             CREATE TABLE IF NOT EXISTS settings (
                 key TEXT PRIMARY KEY,
@@ -24,7 +23,6 @@ def init_db():
             )
         ''')
         
-        # Categories Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +31,6 @@ def init_db():
             )
         ''')
         
-        # Products Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +46,6 @@ def init_db():
             )
         ''')
         
-        # Orders Table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,8 +62,6 @@ def init_db():
         ''')
         
         cursor = conn.cursor()
-        
-        # Default Settings setup
         default_settings = {
             'site_name': 'NovaCart BD',
             'tagline': 'Shop Smart, Live Better',
@@ -160,16 +154,8 @@ def quick_order(product_id):
     address = request.form.get('address')
     area = request.form.get('area')
     
-    charge_map = {
-        'dhaka_inside': 60.0,
-        'dhaka_sub': 100.0,
-        'outside_dhaka': 120.0
-    }
-    charge_name_map = {
-        'dhaka_inside': 'ঢাকা সিটি (৬০ টাকা)',
-        'dhaka_sub': 'ঢাকা সাব এরিয়া (১০০ টাকা)',
-        'outside_dhaka': 'ঢাকার বাইরে (১২০ টাকা)'
-    }
+    charge_map = {'dhaka_inside': 60.0, 'dhaka_sub': 100.0, 'outside_dhaka': 120.0}
+    charge_name_map = {'dhaka_inside': 'ঢাকা সিটি (৬০ টাকা)', 'dhaka_sub': 'ঢাকা সাব এরিয়া (১০০ টাকা)', 'outside_dhaka': 'ঢাকার বাইরে (১২০ টাকা)'}
     
     delivery_charge = charge_map.get(area, 60.0)
     area_display = charge_name_map.get(area, 'ঢাকা সিটি (৬০ টাকা)')
@@ -203,7 +189,6 @@ def track_order():
             order = conn.execute("SELECT * FROM orders WHERE id = ? OR phone = ?", (query, query)).fetchone()
     return render_template('track.html', order=order, searched=searched)
 
-# Admin Password Protection Routes
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
