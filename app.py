@@ -257,30 +257,25 @@ def track_order():
             order = conn.execute("SELECT * FROM orders WHERE id = ? OR phone = ?", (query, query)).fetchone()
     return render_template('track.html', order=order, searched=searched)
 
-# Dynamic Sitemap.xml for Google Search Console
+# Dynamic Sitemap.xml for Google Search Console (Fixed String Formatting)
 @app.route('/sitemap.xml')
 def sitemap():
     host = request.host_url.rstrip('/')
     with get_db() as conn:
         products = conn.execute("SELECT slug FROM products").fetchall()
     
-    xml = '<?xml version="1.0" encoding="UTF-8"?>
-'
-    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-'
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     
     # Homepage
-    xml += f'  <url><loc>{host}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
-'
+    xml += f'  <url><loc>{host}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n'
     
     # Track Page
-    xml += f'  <url><loc>{host}/track</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-'
+    xml += f'  <url><loc>{host}/track</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
     
     # Products Landing Pages
     for p in products:
-        xml += f'  <url><loc>{host}/p/{p["slug"]}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-'
+        xml += f'  <url><loc>{host}/p/{p["slug"]}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n'
         
     xml += '</urlset>'
     return Response(xml, mimetype='application/xml')
@@ -289,10 +284,7 @@ def sitemap():
 @app.route('/robots.txt')
 def robots():
     host = request.host_url.rstrip('/')
-    txt = f"User-agent: *
-Allow: /
-Disallow: /admin
-Sitemap: {host}/sitemap.xml"
+    txt = f"User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: {host}/sitemap.xml"
     return Response(txt, mimetype='text/plain')
 
 @app.route('/admin/login', methods=['GET', 'POST'])
