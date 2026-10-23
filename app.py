@@ -3,10 +3,10 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'novacart_secret_key_2026'
+app.secret_key = 'dropshipping_bd_secret_key_2026'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-DATABASE = os.path.join(basedir, 'novacart.db')
+DATABASE = os.path.join(basedir, 'dropshipping.db')
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -19,7 +19,8 @@ def init_db():
         conn.execute('''
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL
+                name TEXT NOT NULL,
+                icon TEXT DEFAULT 'fa-tags'
             )
         ''')
         
@@ -33,7 +34,9 @@ def init_db():
                 sale_price REAL NOT NULL,
                 category TEXT NOT NULL,
                 image TEXT,
-                description TEXT
+                description TEXT,
+                is_new INTEGER DEFAULT 0,
+                is_top INTEGER DEFAULT 0
             )
         ''')
         
@@ -57,16 +60,25 @@ def init_db():
         cursor.execute("SELECT COUNT(*) FROM products")
         if cursor.fetchone()[0] == 0:
             sample_products = [
-                ("3622", "Electric Small Duck Climbing Stairs Toy", 1290.0, 850.0, "Toys", "https://images.unsplash.com/photo-1531651008558-ed1740375b39?w=500", "সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি টয়।"),
-                ("10220", "16-in-1 Multifunctional Vegetable Chopper", 1190.0, 890.0, "Kitchen & Dining", "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500", "Professional Kitchen Food Cutter with Stainless Steel Blades."),
-                ("7019", "Nylon Backpack Durable Waterproof Casual Shoulder Bag", 1150.0, 850.0, "Womens Bags", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500", "Durable Waterproof Casual Shoulder Bag (Black)."),
-                ("4875", "Curren 8402 Chronograph Men's Watch", 1290.0, 850.0, "Watches", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", "Stylish Chronograph Men's Watch."),
-                ("12523", "Anker TWS AC-100 Buds Pro", 1190.0, 790.0, "Gadgets & Electronics", "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500", "Hi-Res Audio Certified True Wireless Earbuds.")
+                ("DS-101", "240W 5A Fast Charging & Sync USB-C to USB-C Cable", 850.0, 550.0, "Gadgets & Electronics", "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500", "Braided Cord with Built-in Folding Phone Stand.", 1, 1),
+                ("DS-102", "FRB N-26 Wireless Bluetooth 5.4 Neckband Earphone", 1250.0, 890.0, "Gadgets & Electronics", "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500", "600 Hours Standby, Crystal Clear Audio.", 1, 1),
+                ("DS-103", "Rolex Quartz Movement Stainless Steel Analog Watch", 2500.0, 1650.0, "Watches", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", "Premium Luxury Wristwatch for Men.", 1, 0),
+                ("DS-104", "5 in 1 Ladies Watch & Jewelry Gift Set", 1850.0, 1250.0, "Women's Fashion", "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500", "Includes Watch, Earrings, Necklace & Bracelet.", 0, 1),
+                ("DS-105", "Men's Luxury 3-in-1 Combo Set - Watch, Chain & Bracelet", 1950.0, 1390.0, "Men's Fashion", "https://images.unsplash.com/photo-1611591475285-a36ad5e14391?w=500", "Stylish Fashion Combo Set for Men.", 0, 1)
             ]
-            cursor.executemany("INSERT INTO products (code, name, regular_price, sale_price, category, image, description) VALUES (?, ?, ?, ?, ?, ?, ?)", sample_products)
+            cursor.executemany("INSERT INTO products (code, name, regular_price, sale_price, category, image, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
             
-            categories = [("Toys",), ("Kitchen & Dining",), ("Womens Bags",), ("Baby Toy",), ("Skin Care",), ("Makeup",), ("Watches",), ("Gadgets & Electronics",)]
-            cursor.executemany("INSERT INTO categories (name) VALUES (?)", categories)
+            categories = [
+                ("Winter", "fa-snowflake"),
+                ("Men's Fashion", "fa-user-tie"),
+                ("Women's Fashion", "fa-person-dress"),
+                ("Home & Lifestyle", "fa-house"),
+                ("Gadgets & Electronics", "fa-laptop"),
+                ("Watches", "fa-clock"),
+                ("Kids Zone", "fa-child"),
+                ("Foods", "fa-utensils")
+            ]
+            cursor.executemany("INSERT INTO categories (name, icon) VALUES (?, ?)", categories)
             conn.commit()
 
 init_db()
@@ -77,16 +89,21 @@ def index():
     with get_db() as conn:
         categories = conn.execute("SELECT * FROM categories").fetchall()
         if cat:
-            products = conn.execute("SELECT * FROM products WHERE category = ?", (cat,)).fetchall()
+            new_products = conn.execute("SELECT * FROM products WHERE category = ? ORDER BY id DESC", (cat,)).fetchall()
+            top_products = []
         else:
-            products = conn.execute("SELECT * FROM products").fetchall()
-    return render_template('index.html', products=products, categories=categories, current_cat=cat)
+            new_products = conn.execute("SELECT * FROM products WHERE is_new = 1 ORDER BY id DESC").fetchall()
+            top_products = conn.execute("SELECT * FROM products WHERE is_top = 1 ORDER BY id DESC").fetchall()
+            if not new_products and not top_products:
+                new_products = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
+                
+    return render_template('index.html', new_products=new_products, top_products=top_products, categories=categories, current_cat=cat)
 
 @app.route('/product/<int:product_id>')
 def product_detail(product_id):
     with get_db() as conn:
         product = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
-        related = conn.execute("SELECT * FROM products WHERE category = ? AND id != ? LIMIT 3", (product['category'], product_id)).fetchall()
+        related = conn.execute("SELECT * FROM products WHERE category = ? AND id != ? LIMIT 4", (product['category'], product_id)).fetchall()
     return render_template('product_detail.html', product=product, related=related)
 
 @app.route('/quick_order/<int:product_id>', methods=['POST'])
@@ -103,7 +120,7 @@ def quick_order(product_id):
     }
     charge_name_map = {
         'dhaka_inside': 'ঢাকা সিটি (৬০ টাকা)',
-        'dhaka_sub': 'ঢাকা সাব এরিয়া (১০০ টাকা)',
+        'dhaka_sub': 'ঢাকা সাব এরিয়া (১ ১০০ টাকা)',
         'outside_dhaka': 'ঢাকার বাইরে (১২০ টাকা)'
     }
     
@@ -151,15 +168,18 @@ def admin():
             category = request.form.get('category')
             image = request.form.get('image')
             description = request.form.get('description')
+            is_new = 1 if request.form.get('is_new') else 0
+            is_top = 1 if request.form.get('is_top') else 0
             
             with get_db() as conn:
-                conn.execute("INSERT INTO products (code, name, regular_price, sale_price, category, image, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                             (code, name, regular_price, sale_price, category, image, description))
+                conn.execute("INSERT INTO products (code, name, regular_price, sale_price, category, image, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                             (code, name, regular_price, sale_price, category, image, description, is_new, is_top))
                 conn.commit()
         elif action == 'add_category':
             cat_name = request.form.get('cat_name')
+            icon = request.form.get('icon', 'fa-tags')
             with get_db() as conn:
-                conn.execute("INSERT INTO categories (name) VALUES (?)", (cat_name,))
+                conn.execute("INSERT INTO categories (name, icon) VALUES (?, ?)", (cat_name, icon))
                 conn.commit()
         return redirect(url_for('admin'))
         
