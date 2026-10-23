@@ -7,6 +7,11 @@
     <title>{% block title %}{{ site_settings.site_name }} - {{ site_settings.tagline }}{% endblock %}</title>
     <meta name="description" content="{% block meta_desc %}বাংলাদেশের অন্যতম বিশ্বস্ত ই-কমার্স শপ {{ site_settings.site_name }}। ক্যাশ অন ডেলিভারিতে অরিজিনাল প্রডাক্ট অর্ডার করুন।{% endblock %}">
 
+    {% if site_settings.google_site_verification %}
+    <!-- Google Search Console Verification Meta Tag -->
+    <meta name="google-site-verification" content="{{ site_settings.google_site_verification }}" />
+    {% endif %}
+
     <meta property="og:site_name" content="{{ site_settings.site_name }}">
     <meta property="og:title" content="{% block og_title %}{{ site_settings.site_name }} - {{ site_settings.tagline }}{% endblock %}">
     <meta property="og:description" content="{% block og_desc %}সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি গ্যাজেট ও লাইফস্টাইল প্রডাক্ট।{% endblock %}">
@@ -40,9 +45,76 @@
         .brand-logo-img { max-height: 45px; object-fit: contain; }
         .brand-text { font-size: 26px; font-weight: 900; color: var(--primary-color); text-decoration: none; }
         
-        .category-scroll-container { display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 5px; }
-        .category-scroll-container::-webkit-scrollbar { display: none; }
-        .cat-pill { white-space: nowrap; border-radius: 30px; padding: 8px 18px; font-weight: 600; font-size: 13px; transition: 0.3s; }
+        /* Premium WhatsApp Floating Button & Header Icon */
+        .whatsapp-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: #25d366;
+            color: #fff !important;
+            border-radius: 50%;
+            font-size: 22px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .whatsapp-icon-btn:hover {
+            transform: scale(1.1);
+            background-color: #128c7e;
+        }
+
+        .floating-wa-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 9999;
+            width: 55px;
+            height: 55px;
+            font-size: 30px;
+        }
+
+        /* Redesigned Modern Responsive Grid Categories */
+        .category-grid-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 10px;
+        }
+        .category-card {
+            background: #ffffff;
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            text-decoration: none !important;
+            color: #333;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .category-card i {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            transition: transform 0.2s;
+        }
+        .category-card span {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        .category-card:hover, .category-card.active {
+            border-color: var(--primary-color);
+            background: #fff5f2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.15);
+        }
+        .category-card:hover i {
+            transform: scale(1.2);
+        }
 
         .product-card { border: none; border-radius: 12px; background: #ffffff; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
@@ -68,10 +140,11 @@
 
     <div class="announcement-bar text-center">
         <div class="container">
-            {{ site_settings.notice_text }} | 💬 WhatsApp: <a href="https://wa.me/{{ site_settings.whatsapp|replace(' ', '') }}" class="text-warning text-decoration-none fw-bold" target="_blank">{{ site_settings.whatsapp }}</a>
+            {{ site_settings.notice_text }} | 💬 WhatsApp Support
         </div>
     </div>
 
+    <!-- Header with Clean WhatsApp Icon -->
     <header class="main-header sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="/" class="d-flex align-items-center text-decoration-none">
@@ -82,9 +155,11 @@
                 {% endif %}
             </a>
 
-            <div class="d-flex align-items-center">
-                <a href="tel:{{ site_settings.phone }}" class="btn btn-outline-danger btn-sm me-2 d-none d-md-inline-block fw-bold"><i class="fa-solid fa-headset me-1"></i> {{ site_settings.phone }}</a>
-                <a href="/track" class="btn btn-light border btn-sm fw-semibold"><i class="fa-solid fa-truck-fast text-primary me-1"></i> অর্ডার ট্র্যাকিং</a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn" title="Chat on WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <a href="/track" class="btn btn-light border btn-sm fw-semibold"><i class="fa-solid fa-truck-fast text-primary me-1"></i> ট্র্যাকিং</a>
             </div>
         </div>
     </header>
@@ -92,6 +167,11 @@
     <div class="container my-4">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn floating-wa-btn" title="Need Help? Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
     <footer>
         <div class="container">
@@ -110,7 +190,11 @@
                 <div class="col-md-4">
                     <h6 class="mb-3">Customer Support</h6>
                     <p class="small mb-1"><i class="fa-solid fa-phone text-warning me-2"></i> {{ site_settings.phone }}</p>
-                    <p class="small mb-1"><i class="fa-brands fa-whatsapp text-success me-2"></i> {{ site_settings.whatsapp }}</p>
+                    <p class="small mb-1">
+                        <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn me-2" style="width:28px; height:28px; font-size:16px;">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a> হোয়াটসঅ্যাপে চ্যাট করুন
+                    </p>
                 </div>
             </div>
             <hr class="my-4 border-secondary">
@@ -123,7 +207,7 @@
     <div class="mobile-nav">
         <a href="/" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-house d-block fs-5 text-danger"></i> Home</a>
         <a href="/track" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-truck-fast d-block fs-5 text-primary"></i> Track</a>
-        <a href="https://wa.me/{{ site_settings.whatsapp|replace(' ', '') }}" target="_blank" class="text-dark text-decoration-none text-center small"><i class="fa-brands fa-whatsapp d-block fs-5 text-success"></i> WhatsApp</a>
+        <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="text-dark text-decoration-none text-center small"><i class="fa-brands fa-whatsapp d-block fs-5 text-success"></i> WhatsApp</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

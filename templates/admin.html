@@ -27,7 +27,7 @@
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন ল্যান্ডিং পেজ যুক্ত করুন</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস (লোগো/ব্যানার/পাসওয়ার্ড/পিক্সেল)</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস & গুগল সার্চ কনসোল</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#category">📁 ক্যাটাগরি ম্যানেজমেন্ট</button>
@@ -71,11 +71,11 @@
         </div>
       </div>
 
-      <!-- Site Settings Tab (Logo, Banner, Password, FB Pixel) -->
+      <!-- Site Settings & SEO Tab -->
       <div class="tab-pane fade" id="settings">
         <div class="col-md-9 mx-auto">
             <div class="card p-4 border shadow-sm rounded-3">
-                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং ও মার্কেটিং সেটিংস</h5>
+                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং, হোয়াটসঅ্যাপ & গুগল কনসোল সেটিংস</h5>
                 <form action="/admin" method="POST">
                     <input type="hidden" name="action" value="update_settings">
                     <div class="row">
@@ -105,7 +105,7 @@
                             <input type="text" name="phone" class="form-control" value="{{ settings.phone }}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label small fw-bold">হোয়াটসঅ্যাপ নম্বর</label>
+                            <label class="form-label small fw-bold text-success"><i class="fa-brands fa-whatsapp me-1"></i> হোয়াটসঅ্যাপ নম্বর (যেমন: +8801568022033)</label>
                             <input type="text" name="whatsapp" class="form-control" value="{{ settings.whatsapp }}">
                         </div>
                     </div>
@@ -113,6 +113,12 @@
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-danger"><i class="fa-brands fa-facebook me-1"></i> ফেসবুক পিক্সেল আইডি (Facebook Pixel ID)</label>
                         <input type="text" name="fb_pixel_id" class="form-control" value="{{ settings.fb_pixel_id }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-primary"><i class="fa-brands fa-google me-1"></i> গুগল সার্চ কনসোল ভেরিফিকেশন কোড (Google Site Verification)</label>
+                        <input type="text" name="google_site_verification" class="form-control" placeholder="যেমন: abc123xyz_google_code" value="{{ settings.google_site_verification }}">
+                        <small class="text-muted">Google Search Console থেকে পাওয়া HTML Meta Tag-এর content ভ্যালুটি এখানে দিন।</small>
                     </div>
 
                     <div class="mb-3">
@@ -200,9 +206,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> একাধিক ছবি/গ্যালারি ছবির লিংক (কমা দিয়ে আলাদা করুন)</label>
-                        <textarea name="gallery_images" class="form-control" rows="2" placeholder="https://i.imgur.com/img1.jpg, https://i.imgur.com/img2.jpg, https://i.imgur.com/img3.jpg"></textarea>
-                        <small class="text-muted">ল্যান্ডিং পেজে গ্রাহকরা এই ছবিগুলো গ্যালারি ও আসল ফটো হিসেবে দেখতে পাবে।</small>
+                        <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> স্লাইডারের জন্য অতিরিক্ত ছবির লিংক (কমা দিয়ে আলাদা করুন)</label>
+                        <textarea name="gallery_images" class="form-control" rows="2" placeholder="https://i.imgur.com/img1.jpg, https://i.imgur.com/img2.jpg"></textarea>
+                        <small class="text-muted">ল্যান্ডিং পেজের শীর্ষে স্মুথ স্লাইডারে ছবিগুলো একা একাই পরিবর্তন হতে থাকবে।</small>
                     </div>
 
                     <div class="mb-3">

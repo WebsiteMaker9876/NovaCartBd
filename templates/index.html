@@ -12,16 +12,23 @@
 </div>
 {% endif %}
 
+<!-- Redesigned Modern Mobile-Friendly Grid Categories -->
 <div class="bg-white p-3 rounded-3 shadow-sm mb-4 border">
-    <div class="d-flex align-items-center justify-content-between mb-2">
-        <h6 class="fw-bold m-0 text-uppercase text-secondary" style="font-size: 13px;">ক্যাটাগরি সমূহ</h6>
-        <a href="/" class="small text-danger text-decoration-none fw-bold">সব দেখুন</a>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-bold m-0 text-uppercase text-secondary" style="font-size: 13px;"><i class="fa-solid fa-layer-group text-danger me-1"></i> প্রডাক্ট ক্যাটাগরি সমূহ</h6>
+        {% if current_cat %}
+        <a href="/" class="small text-danger text-decoration-none fw-bold"><i class="fa-solid fa-rotate-left me-1"></i> রিচেট করুন</a>
+        {% endif %}
     </div>
-    <div class="category-scroll-container">
-        <a href="/" class="btn cat-pill {% if not current_cat %}btn-danger{% else %}btn-light border{% endif %} me-2">সব প্রডাক্ট</a>
+    <div class="category-grid-box">
+        <a href="/" class="category-card {% if not current_cat %}active{% endif %}">
+            <i class="fa-solid fa-border-all"></i>
+            <span>সব প্রডাক্ট</span>
+        </a>
         {% for cat in categories %}
-        <a href="/?category={{ cat.name }}" class="btn cat-pill {% if current_cat == cat.name %}btn-danger{% else %}btn-light border{% endif %} me-2">
-            <i class="fa-solid {{ cat.icon }} me-1"></i> {{ cat.name }}
+        <a href="/?category={{ cat.name }}" class="category-card {% if current_cat == cat.name %}active{% endif %}">
+            <i class="fa-solid {{ cat.icon }}"></i>
+            <span>{{ cat.name }}</span>
         </a>
         {% endfor %}
     </div>

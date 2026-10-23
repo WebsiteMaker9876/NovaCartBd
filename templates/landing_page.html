@@ -6,7 +6,10 @@
     <title>{{ product.name }} - বিশেষ অফার | {{ site_settings.site_name }}</title>
     <meta name="description" content="{{ product.description[:160] }}">
 
-    <!-- Open Graph for Facebook Ads -->
+    {% if site_settings.google_site_verification %}
+    <meta name="google-site-verification" content="{{ site_settings.google_site_verification }}" />
+    {% endif %}
+
     <meta property="og:site_name" content="{{ site_settings.site_name }}">
     <meta property="og:title" content="{{ product.name }} - ৳{{ product.sale_price|int }}">
     <meta property="og:description" content="{{ product.description[:150] }}">
@@ -37,10 +40,19 @@
         .top-notice { background: #d32f2f; color: #fff; font-size: 15px; font-weight: 700; padding: 10px; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
 
-        .landing-hero { background: #ffffff; border-bottom: 2px solid #eee; padding: 30px 0; }
-        .product-main-img { max-height: 480px; object-fit: cover; border-radius: 16px; border: 2px solid #eee; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .thumb-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd; cursor: pointer; transition: 0.2s; }
-        .thumb-img:hover, .thumb-img.active { border-color: #d32f2f; transform: scale(1.05); }
+        /* Smooth Premium Image Carousel Slider */
+        .carousel-item img {
+            max-height: 480px;
+            object-fit: cover;
+            border-radius: 16px;
+            width: 100%;
+        }
+        .carousel {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 2px solid #eee;
+        }
 
         .badge-offer { background: #e53935; color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: bold; }
         .price-tag { font-size: 34px; font-weight: 900; color: #d32f2f; }
@@ -56,6 +68,30 @@
 
         .trust-badge { background: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px; text-align: center; color: #2e7d32; font-weight: 700; font-size: 14px; }
         
+        .whatsapp-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background-color: #25d366;
+            color: #fff !important;
+            border-radius: 50%;
+            font-size: 22px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .review-card {
+            background: #ffffff;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
         .sticky-order-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 2px solid #d32f2f; padding: 10px 15px; z-index: 99999; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
         @media (max-width: 768px) {
             .sticky-order-bar { display: flex; align-items: center; justify-content: space-between; }
@@ -65,12 +101,11 @@
 </head>
 <body>
 
-    <!-- Top Announcement Bar -->
     <div class="top-notice text-center">
         <i class="fa-solid fa-fire me-2"></i> অফারটি সীমিত সময়ের জন্য! ক্যাশ অন ডেলিভারিতে অর্ডার করুন।
     </div>
 
-    <!-- Header Logo / Call Bar -->
+    <!-- Header with Clean WhatsApp Icon -->
     <div class="bg-white py-2 border-bottom">
         <div class="container d-flex justify-content-between align-items-center">
             <a href="/" class="text-decoration-none">
@@ -80,7 +115,9 @@
                 <span class="fs-3 fw-bold text-danger">🛒 {{ site_settings.site_name }}</span>
                 {% endif %}
             </a>
-            <a href="tel:{{ site_settings.phone }}" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-phone me-1"></i> {{ site_settings.phone }}</a>
+            <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn" title="Chat on WhatsApp">
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
         </div>
     </div>
 
@@ -88,18 +125,30 @@
         <!-- Hero Section -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
             <div class="row align-items-center">
-                <!-- Gallery Images Section -->
+                <!-- Premium Animated Carousel Image Slider -->
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img id="mainProductImage" src="{{ product.image }}" class="product-main-img mb-3" alt="{{ product.name }}">
-                    
-                    {% if gallery %}
-                    <div class="d-flex gap-2 overflow-auto pb-2 justify-content-center">
-                        <img src="{{ product.image }}" class="thumb-img active" onclick="changeImage(this.src, this)">
-                        {% for g_img in gallery %}
-                        <img src="{{ g_img }}" class="thumb-img" onclick="changeImage(this.src, this)">
-                        {% endfor %}
+                    <div id="productCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3500">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="{{ product.image }}" class="d-block w-100" alt="{{ product.name }}">
+                            </div>
+                            {% if gallery %}
+                                {% for g_img in gallery %}
+                                <div class="carousel-item">
+                                    <img src="{{ g_img }}" class="d-block w-100" alt="{{ product.name }}">
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        {% if gallery %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        </button>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
 
                 <!-- Product Details & Highlights -->
@@ -142,19 +191,33 @@
             <p class="fs-5 text-secondary" style="line-height: 1.8; white-space: pre-line;">{{ product.description }}</p>
         </div>
 
-        <!-- Multi Photo Highlight Section -->
-        {% if gallery %}
+        <!-- Customer Reviews & Feedback Section -->
         <div class="bg-white p-4 rounded-4 shadow-sm border mb-4">
-            <h4 class="fw-bold text-dark text-center mb-4"><i class="fa-solid fa-images me-2 text-danger"></i>প্রডাক্টের আসল ছবি ও গ্যালাভিউ</h4>
-            <div class="row row-cols-1 row-cols-md-3 g-3">
-                {% for g_img in gallery %}
-                <div class="col text-center">
-                    <img src="{{ g_img }}" class="img-fluid rounded-3 border shadow-sm w-100" style="max-height: 320px; object-fit: cover;">
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                <h4 class="fw-bold text-dark m-0"><i class="fa-solid fa-comments me-2 text-warning"></i>সম্মানিত কাস্টমারদের মতামত ও রিভিউ ({{ reviews|length }})</h4>
+                <a href="#writeReviewModal" data-bs-toggle="modal" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-pen me-1"></i> রিভিউ দিন</a>
+            </div>
+
+            {% if reviews %}
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                {% for r in reviews %}
+                <div class="col">
+                    <div class="review-card">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong class="text-dark">{{ r.customer_name }}</strong>
+                            <span class="text-warning small">
+                                {% for i in range(r.rating) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                            </span>
+                        </div>
+                        <p class="text-muted small m-0">{{ r.comment }}</p>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <p class="text-muted text-center py-3">এখনো কোনো রিভিউ দেওয়া হয়নি। প্রথম রিভিউ প্রদানকারী হতে পারেন আপনি!</p>
+            {% endif %}
         </div>
-        {% endif %}
 
         <!-- High-Converting Fast Order Form -->
         <div id="orderFormSection" class="order-section-card my-5">
@@ -163,7 +226,7 @@
                 <p class="text-muted fw-semibold mb-0">কোনো অগ্রিম টাকা দেওয়া লাগবে না। প্রডাক্ট হাতে পেয়ে টাকা পরিশোধ করবেন।</p>
             </div>
 
-            <form action="/quick_order/{{ product.id }}" method="POST" onsubmit="trackPixelOrder('{{ product.name }}', {{ product.sale_price }})">
+            <form action="/quick_order/{{ product.id }}" method="POST">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">আপনার নাম *</label>
@@ -194,6 +257,40 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div class="modal fade" id="writeReviewModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">প্রডাক্ট রিভিউ বা মতামত দিন</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form action="/add_review/{{ product.id }}" method="POST">
+              <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">আপনার নাম</label>
+                    <input type="text" name="customer_name" class="form-control" placeholder="যেমন: আপনার নাম" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">রেটিং</label>
+                    <select name="rating" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ (৫ স্টার)</option>
+                        <option value="4">⭐⭐⭐⭐ (৪ স্টার)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">আপনার মতামত/অভিজ্ঞতা</label>
+                    <textarea name="comment" class="form-control" rows="3" placeholder="প্রডাক্ট বা সার্ভিস সম্পর্কে কিছু লিখুন..." required></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-danger fw-bold w-100">সাবমিট করুন</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Mobile Sticky Order Button -->
     <div class="sticky-order-bar">
         <div>
@@ -203,26 +300,6 @@
         <a href="#orderFormSection" class="btn btn-danger fw-bold rounded-pill px-4 py-2"><i class="fa-solid fa-bolt me-1"></i> অর্ডার করুন</a>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-1 fw-bold">{{ site_settings.site_name }} - {{ site_settings.tagline }}</p>
-            <small class="text-muted">© 2026 All Rights Reserved.</small>
-        </div>
-    </footer>
-
-    <script>
-        function changeImage(src, element) {
-            document.getElementById('mainProductImage').src = src;
-            document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        function trackPixelOrder(productName, price) {
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'Purchase', {content_name: productName, value: price, currency: 'BDT'});
-            }
-        }
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
