@@ -1,10 +1,11 @@
 import os
 import sqlite3
+import re
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
-app.secret_key = 'novacart_pro_ultra_secret_key_2026'
+app.secret_key = 'novacart_pro_landing_secret_key_2026'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.path.join(basedir, 'novacart_pro.db')
@@ -13,6 +14,12 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+def generate_slug(text):
+    text = text.lower().strip()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[\s_-]+', '-', text)
+    return text.strip('-')
 
 def init_db():
     with get_db() as conn:
@@ -31,15 +38,19 @@ def init_db():
             )
         ''')
         
+        # Extended Products Table with Slug and Gallery Images
         conn.execute('''
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 code TEXT,
+                slug TEXT UNIQUE,
                 name TEXT NOT NULL,
                 regular_price REAL NOT NULL,
                 sale_price REAL NOT NULL,
                 category TEXT NOT NULL,
                 image TEXT,
+                gallery_images TEXT,
+                features TEXT,
                 description TEXT,
                 is_new INTEGER DEFAULT 0,
                 is_top INTEGER DEFAULT 0
@@ -81,13 +92,25 @@ def init_db():
         cursor.execute("SELECT COUNT(*) FROM products")
         if cursor.fetchone()[0] == 0:
             sample_products = [
-                ("NC-3622", "Electric Small Duck Climbing Stairs Toy", 1290.0, 850.0, "Toys", "https://images.unsplash.com/photo-1531651008558-ed1740375b39?w=500", "সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি টয়।", 1, 1),
-                ("NC-10220", "16-in-1 Multifunctional Vegetable Chopper", 1190.0, 890.0, "Kitchen & Dining", "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500", "Professional Kitchen Food Cutter with Stainless Steel Blades.", 1, 1),
-                ("NC-7019", "Nylon Backpack Durable Waterproof Casual Shoulder Bag", 1150.0, 850.0, "Womens Bags", "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500", "Durable Waterproof Casual Shoulder Bag (Black).", 0, 1),
-                ("NC-4875", "Curren 8402 Chronograph Men's Watch", 1290.0, 850.0, "Watches", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", "Stylish Chronograph Men's Watch.", 1, 0),
-                ("NC-12523", "Anker TWS AC-100 Buds Pro Earbuds", 1190.0, 790.0, "Gadgets & Electronics", "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500", "Hi-Res Audio Certified True Wireless Earbuds.", 1, 1)
+                ("NC-3622", "electric-duck-climbing-stairs-toy", "Electric Small Duck Climbing Stairs Toy", 1290.0, 850.0, "Toys", 
+                 "https://images.unsplash.com/photo-1531651008558-ed1740375b39?w=800", 
+                 "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800,https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=800,https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800",
+                 "বাচ্চাদের আকর্ষনীয় মিউজিক ও লাইটিং|স্বয়ংক্রিয় সিঁড়ি বেয়ে ওঠার মজার খেলা|১০০% সেইফ ও প্রিমিয়াম প্লাস্টিক উপাদান|ব্যাটারি চালিত ও অত্যন্ত টেকসই",
+                 "সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার বাচ্চার জন্য সেরা উপহার ট্রেন্ডি ডাক ক্লাইম্বিং টয়। এটি বাচ্চাদের মনোযোগ ও বুদ্ধি বৃদ্ধিতে সাহায্য করে।", 1, 1),
+                
+                ("NC-10220", "16-in-1-multifunctional-vegetable-chopper", "16-in-1 Multifunctional Vegetable Chopper", 1190.0, 890.0, "Kitchen & Dining", 
+                 "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=800", 
+                 "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800,https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800",
+                 "১৬টি ভিন্ন ধরনের কাটিং ও চপিং ব্লেড|স্টেইনলেস স্টিল মরিচারোধী ব্লেড|সহজে পরিষ্কারযোগ্য ও ডিশওয়াশার সেফ|রান্নার সময় বাঁচায় ৭০%",
+                 "Professional Kitchen Food Cutter with Stainless Steel Blades. আপনার রান্নাঘরের নিত্যদিনের কাজকে করুন সহজ ও দ্রুত।", 1, 1),
+
+                ("NC-12523", "anker-tws-ac-100-buds-pro-earbuds", "Anker TWS AC-100 Buds Pro Earbuds", 1190.0, 790.0, "Gadgets & Electronics", 
+                 "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800", 
+                 "https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?w=800,https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800",
+                 "হাই রেস ক্রিস্টাল ক্লিয়ার সাউন্ড|এক চার্জে ৩০ ঘণ্টা ব্যাটারি ব্যাকআপ|একটিভ নয়েজ ক্যানসেলেশন (ANC)|ওয়াটারপ্রুফ IPX7 রেটিং",
+                 "Hi-Res Audio Certified True Wireless Earbuds. গান শোনা বা গেমিংয়ের জন্য সেরা সাউন্ড অভিজ্ঞতা।", 1, 1)
             ]
-            cursor.executemany("INSERT INTO products (code, name, regular_price, sale_price, category, image, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
+            cursor.executemany("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
             
             categories = [
                 ("Toys", "fa-robot"),
@@ -129,23 +152,36 @@ def index():
     with get_db() as conn:
         categories = conn.execute("SELECT * FROM categories").fetchall()
         if cat:
-            new_products = conn.execute("SELECT * FROM products WHERE category = ? ORDER BY id DESC", (cat,)).fetchall()
-            top_products = []
+            products = conn.execute("SELECT * FROM products WHERE category = ? ORDER BY id DESC", (cat,)).fetchall()
         else:
-            new_products = conn.execute("SELECT * FROM products WHERE is_new = 1 ORDER BY id DESC").fetchall()
-            top_products = conn.execute("SELECT * FROM products WHERE is_top = 1 ORDER BY id DESC").fetchall()
-            if not new_products and not top_products:
-                new_products = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
+            products = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
                 
-    return render_template('index.html', new_products=new_products, top_products=top_products, categories=categories, current_cat=cat, settings=settings)
+    return render_template('index.html', products=products, categories=categories, current_cat=cat, settings=settings)
 
-@app.route('/product/<int:product_id>')
-def product_detail(product_id):
+# High-Converting Custom Landing Page Route via Product Slug
+@app.route('/p/<slug>')
+def product_landing(slug):
     settings = get_settings()
     with get_db() as conn:
-        product = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
-        related = conn.execute("SELECT * FROM products WHERE category = ? AND id != ? LIMIT 4", (product['category'], product_id)).fetchall()
-    return render_template('product_detail.html', product=product, related=related, settings=settings)
+        product = conn.execute("SELECT * FROM products WHERE slug = ?", (slug,)).fetchone()
+        if not product:
+            # Fallback check by ID if numeric passed
+            if slug.isdigit():
+                product = conn.execute("SELECT * FROM products WHERE id = ?", (int(slug),)).fetchone()
+            if not product:
+                return redirect(url_for('index'))
+        
+        gallery = []
+        if product['gallery_images']:
+            gallery = [img.strip() for img in product['gallery_images'].split(',') if img.strip()]
+        
+        features = []
+        if product['features']:
+            features = [f.strip() for f in product['features'].split('|') if f.strip()]
+            
+        related = conn.execute("SELECT * FROM products WHERE category = ? AND id != ? LIMIT 4", (product['category'], product['id'])).fetchall()
+        
+    return render_template('landing_page.html', product=product, gallery=gallery, features=features, related=related, settings=settings)
 
 @app.route('/quick_order/<int:product_id>', methods=['POST'])
 def quick_order(product_id):
@@ -215,18 +251,21 @@ def admin():
             if action == 'add_product':
                 code = request.form.get('code')
                 name = request.form.get('name')
+                slug = generate_slug(name)
                 regular_price = float(request.form.get('regular_price'))
                 sale_price = float(request.form.get('sale_price'))
                 category = request.form.get('category')
                 image = request.form.get('image')
+                gallery_images = request.form.get('gallery_images')
+                features = request.form.get('features')
                 description = request.form.get('description')
                 is_new = 1 if request.form.get('is_new') else 0
                 is_top = 1 if request.form.get('is_top') else 0
                 
-                conn.execute("INSERT INTO products (code, name, regular_price, sale_price, category, image, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                             (code, name, regular_price, sale_price, category, image, description, is_new, is_top))
+                conn.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                             (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top))
                 conn.commit()
-                flash('প্রডাক্ট সফলভাবে যুক্ত করা হয়েছে!', 'success')
+                flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে যুক্ত করা হয়েছে!', 'success')
                 
             elif action == 'add_category':
                 cat_name = request.form.get('cat_name')
