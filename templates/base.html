@@ -3,34 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaCart BD - Shop Smart, Live Better</title>
+    <title>DropShipping BD - Trusted Business in Bangladesh</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
-        .top-bar { background-color: #0088cc; color: #fff; font-size: 14px; padding: 6px 0; }
-        .navbar-brand-custom { font-size: 24px; font-weight: bold; color: #e65100; text-decoration: none; }
-        .badge-discount { position: absolute; top: 10px; left: 10px; background-color: #e65100; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
-        .product-card { transition: transform 0.2s; border-radius: 8px; overflow: hidden; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-        .price-sale { color: #e65100; font-weight: bold; font-size: 18px; }
-        .price-regular { text-decoration: line-through; color: #888; font-size: 14px; margin-left: 6px; }
-        .btn-order { background-color: #e65100; color: white; font-weight: bold; width: 100%; border: none; }
-        .btn-order:hover { background-color: #bf360c; color: white; }
-        footer { background-color: #212529; color: #aaa; padding: 30px 0; margin-top: 50px; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; color: #333; }
+        .top-header { background-color: #ffffff; border-bottom: 1px solid #e9ecef; padding: 12px 0; }
+        .logo-text { font-size: 26px; font-weight: 800; color: #2b3990; text-decoration: none; letter-spacing: -0.5px; }
+        .logo-text span { color: #e6194b; }
+        .call-now { font-size: 14px; font-weight: 600; color: #2b3990; }
+        .nav-main { background-color: #2b3990; }
+        .nav-main .nav-link { color: #ffffff !important; font-weight: 500; font-size: 15px; padding: 10px 16px; }
+        .nav-main .nav-link:hover { background-color: #1e2867; }
+        
+        /* Product Card Design */
+        .product-card { border: 1px solid #e3e6ef; border-radius: 8px; background: #fff; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-3px); }
+        .badge-discount { position: absolute; top: 10px; right: 10px; background: #e6194b; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .price-sale { color: #2b3990; font-weight: 700; font-size: 18px; }
+        .price-regular { text-decoration: line-through; color: #888; font-size: 13px; margin-left: 5px; }
+        .btn-buy { background-color: #e6194b; color: #fff; font-weight: 600; border-radius: 6px; border: none; width: 100%; transition: 0.2s; }
+        .btn-buy:hover { background-color: #c0133c; color: #fff; }
+        
+        /* Features Banner */
+        .feature-box { background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
+        .feature-icon { font-size: 24px; color: #2b3990; margin-right: 12px; }
+
+        footer { background-color: #1a1e36; color: #b0b7c3; padding: 40px 0 20px 0; margin-top: 60px; }
+        footer h6 { color: #ffffff; font-weight: 700; margin-bottom: 15px; }
+        footer a { color: #b0b7c3; text-decoration: none; }
+        footer a:hover { color: #ffffff; }
+        
+        /* Bottom Mobile Bar */
+        .mobile-bottom-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #ddd; z-index: 9999; padding: 8px 0; text-align: center; }
+        @media (max-width: 768px) {
+            .mobile-bottom-bar { display: flex; justify-content: space-around; }
+            body { padding-bottom: 60px; }
+        }
     </style>
 </head>
 <body>
-    <div class="top-bar text-center">
-        🚀 ক্যাশ অন ডেলিভারি সারা বাংলাদেশে! | 💬 হোয়াটসঅ্যাপ: +880 1568-022033
-    </div>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
-        <div class="container">
-            <a class="navbar-brand-custom" href="/">🛒 NovaCart BD</a>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="/" class="logo-text">DropShipping<span>BD</span></a>
             <div class="d-flex align-items-center">
-                <a href="/track" class="btn btn-outline-secondary me-2 btn-sm"><i class="fa-solid fa-truck-fast"></i> ট্র্যাকিং</a>
-                <a href="/admin" class="btn btn-dark btn-sm"><i class="fa-solid fa-user-shield"></i> অ্যাডমিন</a>
+                <div class="call-now me-3 d-none d-md-block">
+                    <i class="fa-solid fa-headset text-danger me-1"></i> Call Us: <strong>01630990000</strong>
+                </div>
+                <a href="/track" class="btn btn-outline-primary btn-sm me-2"><i class="fa-solid fa-truck-fast"></i> ট্র্যাকিং</a>
+                <a href="/admin" class="btn btn-dark btn-sm"><i class="fa-solid fa-user-gear"></i> অ্যাডমিন</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="navbar navbar-expand-lg nav-main p-0 d-none d-lg-block">
+        <div class="container">
+            <div class="navbar-nav">
+                <a class="nav-link" href="/"><i class="fa-solid fa-house me-1"></i> হোমপেজ</a>
+                <a class="nav-link" href="/?category=Winter">Winter</a>
+                <a class="nav-link" href="/?category=Men's Fashion">Men's Fashion</a>
+                <a class="nav-link" href="/?category=Women's Fashion">Women's Fashion</a>
+                <a class="nav-link" href="/?category=Gadgets & Electronics">Gadgets & Electronics</a>
+                <a class="nav-link" href="/?category=Watches">Watches</a>
+                <a class="nav-link" href="/?category=Kids Zone">Kids Zone</a>
             </div>
         </div>
     </nav>
@@ -39,13 +77,84 @@
         {% block content %}{% endblock %}
     </div>
 
-    <footer class="text-center">
+    <!-- Feature Icons -->
+    <div class="container my-5">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="feature-box d-flex align-items-center">
+                    <i class="fa-solid fa-shield-halved feature-icon"></i>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">High-quality Goods</h6>
+                        <small class="text-muted" style="font-size: 12px;">Top items for less</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-box d-flex align-items-center">
+                    <i class="fa-solid fa-comments feature-icon"></i>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">24/7 Live Chat</h6>
+                        <small class="text-muted" style="font-size: 12px;">Instant assistance</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-box d-flex align-items-center">
+                    <i class="fa-solid fa-truck-ramp-box feature-icon"></i>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Express Shipping</h6>
+                        <small class="text-muted" style="font-size: 12px;">Fast & reliable</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="feature-box d-flex align-items-center">
+                    <i class="fa-solid fa-wallet feature-icon"></i>
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Cash on Delivery</h6>
+                        <small class="text-muted" style="font-size: 12px;">Safe payment</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
         <div class="container">
-            <p class="mb-1 fw-bold text-white">NovaCart BD - Shop Smart, Live Better.</p>
-            <p class="mb-2">💬 হোয়াটসঅ্যাপ: +880 1568-022033 | 📧 ইমেইল: support@novacartbd.com</p>
-            <small>© 2026 NovaCart BD. সর্বস্বত্ব সংরক্ষিত।</small>
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <a href="/" class="logo-text text-white mb-2 d-inline-block">DropShipping<span class="text-danger">BD</span></a>
+                    <p class="small text-muted">বাংলাদেশের অন্যতম বিশ্বস্ত ই-কমার্স প্ল্যাটফর্ম। ক্যাশ অন ডেলিভারিতে পুরো বাংলাদেশে হোম ডেলিভারি সুবিধা।</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-1"><a href="/">হোমপেজ</a></li>
+                        <li class="mb-1"><a href="/track">অর্ডার ট্র্যাকিং</a></li>
+                        <li class="mb-1"><a href="/admin">অ্যাডমিন প্যানেল</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Contact Us</h6>
+                    <p class="small mb-1"><i class="fa-solid fa-phone me-2 text-danger"></i> 01630990000</p>
+                    <p class="small mb-1"><i class="fa-solid fa-envelope me-2 text-danger"></i> support@dropshipping.com.bd</p>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center small text-muted">
+                All rights reserved © 2026 DropShipping BD.
+            </div>
         </div>
     </footer>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="mobile-bottom-bar">
+        <a href="/" class="text-dark text-decoration-none small"><i class="fa-solid fa-house d-block fs-5 text-primary"></i> Home</a>
+        <a href="/track" class="text-dark text-decoration-none small"><i class="fa-solid fa-truck-fast d-block fs-5 text-danger"></i> Track</a>
+        <a href="tel:01630990000" class="text-dark text-decoration-none small"><i class="fa-solid fa-phone d-block fs-5 text-success"></i> Call</a>
+        <a href="/admin" class="text-dark text-decoration-none small"><i class="fa-solid fa-user-shield d-block fs-5 text-dark"></i> Admin</a>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>

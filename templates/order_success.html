@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="col-md-6 mx-auto">
-    <div class="card p-4 shadow-sm border-0 text-center">
+<div class="col-md-6 mx-auto my-4">
+    <div class="card p-4 shadow-sm border-0 text-center bg-white">
         <div class="text-success fs-1 mb-2"><i class="fa-solid fa-circle-check"></i></div>
-        <h3 class="fw-bold text-success mb-2">অর্ডারটি সফলভাবে সম্পন্ন হয়েছে!</h3>
-        <p class="text-muted">আমাদের প্রতিনিধি খুব শীঘ্রই আপনার নাম্বারে কল করে অর্ডারটি কনফার্ম করবেন।</p>
+        <h4 class="fw-bold text-success mb-2">আপনার অর্ডারটি সফলভাবে জমা হয়েছে!</h4>
+        <p class="text-muted small">খুব শীঘ্রই আমাদের সাপোর্ট টিম কল করে অর্ডারটি কনফার্ম করবে।</p>
         
-        <div class="bg-light p-3 rounded text-start my-3">
-            <p class="mb-1"><strong>অর্ডার আইডি:</strong> #{{ order_id }}</p>
-            <p class="mb-1"><strong>প্রোডাক্ট:</strong> {{ product.name }} (কোড: {{ product.code }})</p>
-            <p class="mb-1"><strong>কাস্টমার:</strong> {{ name }} ({{ phone }})</p>
-            <p class="mb-1"><strong>ঠিকানা:</strong> {{ address }}</p>
-            <p class="mb-1"><strong>ডেলিভারি চার্জ:</strong> ৳ {{ charge|int }}</p>
+        <div class="bg-light p-3 rounded text-start my-3 border">
+            <p class="mb-1 small"><strong>অর্ডার আইডি:</strong> #{{ order_id }}</p>
+            <p class="mb-1 small"><strong>পণ্য:</strong> {{ product.name }} (কোড: {{ product.code }})</p>
+            <p class="mb-1 small"><strong>কাস্টমার:</strong> {{ name }} ({{ phone }})</p>
+            <p class="mb-1 small"><strong>ঠিকানা:</strong> {{ address }}</p>
+            <p class="mb-1 small"><strong>ডেলিভারি চার্জ:</strong> ৳ {{ charge|int }}</p>
             <hr class="my-2">
             <p class="mb-0 fs-5 fw-bold text-danger">মোট প্রদেয়: ৳ {{ total|int }} (ক্যাশ অন ডেলিভারি)</p>
         </div>
 
-        <a href="/" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> আরও শপিং করুন</a>
+        <a href="/" class="btn btn-primary"><i class="fa-solid fa-house me-1"></i> হোমে ফিরে যান</a>
     </div>
 </div>
 {% endblock %}

@@ -1,26 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3 class="fw-bold mb-4">⚙️ NovaCart BD অ্যাডমিন প্যানেল</h3>
+<div class="bg-white p-4 rounded shadow-sm border">
+    <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-user-gear me-2"></i>DropShipping BD অ্যাডমিন প্যানেল</h4>
 
-<ul class="nav nav-tabs mb-4" id="adminTab">
-  <li class="nav-item">
-    <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 অর্ডারসমূহ ({{ orders|length }})</button>
-  </li>
-  <li class="nav-item">
-    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট লিস্ট</button>
-  </li>
-  <li class="nav-item">
-    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন প্রডাক্ট যোগ করুন</button>
-  </li>
-</ul>
+    <ul class="nav nav-tabs mb-4" id="adminTab">
+      <li class="nav-item">
+        <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 অর্ডারসমূহ ({{ orders|length }})</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট লিস্ট</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন প্রডাক্ট</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#category">📁 ক্যাটাগরি ম্যানেজমেন্ট</button>
+      </li>
+    </ul>
 
-<div class="tab-content">
-  <!-- Orders Tab -->
-  <div class="tab-pane fade show active" id="orders">
-    <div class="card p-3 border-0 shadow-sm">
+    <div class="tab-content">
+      <!-- Orders Tab -->
+      <div class="tab-pane fade show active" id="orders">
         <h5 class="fw-bold mb-3">কাস্টমার অর্ডার তালিকা</h5>
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle border">
                 <thead class="table-dark">
                     <tr>
                         <th>#ID</th>
@@ -36,96 +39,139 @@
                     {% for o in orders %}
                     <tr>
                         <td>#{{ o.id }}</td>
-                        <td><strong>{{ o.customer_name }}</strong><br><small>{{ o.phone }}</small></td>
+                        <td><strong>{{ o.customer_name }}</strong><br><small class="text-muted">{{ o.phone }}</small></td>
                         <td>{{ o.address }}<br><small class="text-primary">{{ o.delivery_area }}</small></td>
                         <td>{{ o.items_summary }}</td>
-                        <td class="fw-bold text-danger">৳ {{ o.total_price|int }}</td>
+                        <td class="fw-bold text-danger">৳{{ o.total_price|int }}</td>
                         <td><span class="badge bg-info text-dark">{{ o.status }}</span></td>
                         <td>
-                            <a href="/admin/update_order/{{ o.id }}/Confirmed" class="btn btn-success btn-sm mb-1">Confirm</a>
-                            <a href="/admin/update_order/{{ o.id }}/Shipped" class="btn btn-warning btn-sm mb-1">Ship</a>
+                            <a href="/admin/update_order/{{ o.id }}/Confirmed" class="btn btn-success btn-sm py-0">Confirm</a>
+                            <a href="/admin/update_order/{{ o.id }}/Shipped" class="btn btn-warning btn-sm py-0">Ship</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
-  </div>
+      </div>
 
-  <!-- Products Tab -->
-  <div class="tab-pane fade" id="products">
-    <div class="card p-3 border-0 shadow-sm">
+      <!-- Products Tab -->
+      <div class="tab-pane fade" id="products">
         <h5 class="fw-bold mb-3">স্টকে থাকা প্রডাক্টসমূহ</h5>
         <div class="table-responsive">
-            <table class="table align-middle">
+            <table class="table align-middle border">
                 <thead>
-                    <tr><th>ছবি</th><th>কোড</th><th>নাম</th><th>দাম</th><th>ক্যাটাগরি</th><th>অ্যাকশন</th></tr>
+                    <tr><th>ছবি</th><th>কোড</th><th>নাম</th><th>দাম</th><th>ক্যাটাগরি</th><th>সেকশন</th><th>অ্যাকশন</th></tr>
                 </thead>
                 <tbody>
                     {% for p in products %}
                     <tr>
-                        <td><img src="{{ p.image }}" width="45" height="45" style="object-fit:cover; border-radius:4px;"></td>
+                        <td><img src="{{ p.image }}" width="40" height="40" style="object-fit:cover; border-radius:4px;"></td>
                         <td>{{ p.code }}</td>
                         <td>{{ p.name }}</td>
-                        <td><span class="text-danger fw-bold">৳ {{ p.sale_price|int }}</span> <del class="text-muted small">৳ {{ p.regular_price|int }}</del></td>
+                        <td><span class="text-danger fw-bold">৳{{ p.sale_price|int }}</span> <del class="text-muted small">৳{{ p.regular_price|int }}</del></td>
                         <td><span class="badge bg-secondary">{{ p.category }}</span></td>
-                        <td><a href="/admin/delete_product/{{ p.id }}" class="btn btn-danger btn-sm" onclick="return confirm('ডিলিট করতে চান?')">ডিলিট</a></td>
+                        <td>
+                            {% if p.is_new %}<span class="badge bg-danger">New</span>{% endif %}
+                            {% if p.is_top %}<span class="badge bg-primary">Top</span>{% endif %}
+                        </td>
+                        <td><a href="/admin/delete_product/{{ p.id }}" class="btn btn-danger btn-sm py-0" onclick="return confirm('ডিলিট করতে চান?')">ডিলিট</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
-  </div>
+      </div>
 
-  <!-- Add Product Tab -->
-  <div class="tab-pane fade" id="add">
-    <div class="col-md-8 mx-auto">
-        <div class="card p-4 border-0 shadow-sm">
-            <h5 class="fw-bold mb-3">নতুন প্রডাক্ট যোগ করুন</h5>
-            <form action="/admin" method="POST">
-                <input type="hidden" name="action" value="add_product">
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label small fw-bold">প্রডাক্ট কোড</label>
-                        <input type="text" name="code" class="form-control" placeholder="যেমন: 3622" required>
+      <!-- Add Product Tab -->
+      <div class="tab-pane fade" id="add">
+        <div class="col-md-8 mx-auto">
+            <div class="card p-4 border shadow-sm">
+                <h5 class="fw-bold mb-3">নতুন প্রডাক্ট যোগ করুন</h5>
+                <form action="/admin" method="POST">
+                    <input type="hidden" name="action" value="add_product">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small fw-bold">প্রডাক্ট কোড</label>
+                            <input type="text" name="code" class="form-control form-control-sm" placeholder="যেমন: DS-101" required>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small fw-bold">ক্যাটাগরি</label>
+                            <select name="category" class="form-select form-select-sm" required>
+                                {% for c in categories %}
+                                <option value="{{ c.name }}">{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label small fw-bold">ক্যাটাগরি</label>
-                        <select name="category" class="form-select" required>
-                            {% for c in categories %}
-                            <option value="{{ c.name }}">{{ c.name }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">প্রডাক্টের নাম</label>
+                        <input type="text" name="name" class="form-control form-control-sm" required>
                     </div>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small fw-bold">প্রডাক্টের নাম</label>
-                    <input type="text" name="name" class="form-control" required>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label small fw-bold">নিয়মিত মূল্য (Regular Price)</label>
-                        <input type="number" step="any" name="regular_price" class="form-control" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small fw-bold">নিয়মিত মূল্য (Regular Price)</label>
+                            <input type="number" step="any" name="regular_price" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label small fw-bold">অফার মূল্য (Sale Price)</label>
+                            <input type="number" step="any" name="sale_price" class="form-control form-control-sm" required>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label small fw-bold">অফার মূল্য (Sale Price)</label>
-                        <input type="number" step="any" name="sale_price" class="form-control" required>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">ছবির লিংক (Image URL)</label>
+                        <input type="text" name="image" class="form-control form-control-sm" required>
                     </div>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small fw-bold">ছবির লিংক (Image URL)</label>
-                    <input type="text" name="image" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">বিবরণ</label>
-                    <textarea name="description" class="form-control" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success w-100">প্রডাক্ট সেভ করুন</button>
-            </form>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">বিবরণ</label>
+                        <textarea name="description" class="form-control form-control-sm" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3 d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_new" value="1" id="isNew" checked>
+                            <label class="form-check-label small" for="isNew">New Arrival-এ দেখাবে</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_top" value="1" id="isTop">
+                            <label class="form-check-label small" for="isTop">Top Selling-এ দেখাবে</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">প্রডাক্ট সেভ করুন</button>
+                </form>
+            </div>
         </div>
+      </div>
+
+      <!-- Add Category Tab -->
+      <div class="tab-pane fade" id="category">
+        <div class="col-md-6 mx-auto">
+            <div class="card p-4 border shadow-sm">
+                <h5 class="fw-bold mb-3">নতুন ক্যাটাগরি যোগ করুন</h5>
+                <form action="/admin" method="POST">
+                    <input type="hidden" name="action" value="add_category">
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">ক্যাটাগরির নাম</label>
+                        <input type="text" name="cat_name" class="form-control form-control-sm" placeholder="যেমন: Organic Food" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">FontAwesome আইকন ক্লাস (ঐচ্ছিক)</label>
+                        <input type="text" name="icon" class="form-control form-control-sm" placeholder="যেমন: fa-leaf" value="fa-tags">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">ক্যাটাগরি সেভ করুন</button>
+                </form>
+
+                <hr class="my-4">
+                <h6 class="fw-bold">বর্তমান ক্যাটাগরিসমূহ:</h6>
+                <ul class="list-group mt-2">
+                    {% for c in categories %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center small py-2">
+                        <span><i class="fa-solid {{ c.icon }} me-2 text-primary"></i>{{ c.name }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+      </div>
     </div>
-  </div>
 </div>
 {% endblock %}
