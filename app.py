@@ -2,10 +2,10 @@ import os
 import sqlite3
 import re
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, Response
 
 app = Flask(__name__)
-app.secret_key = 'novacart_pro_landing_secret_key_2026'
+app.secret_key = 'novacart_pro_ultimate_secret_key_2026'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.path.join(basedir, 'novacart_pro.db')
@@ -38,7 +38,6 @@ def init_db():
             )
         ''')
         
-        # Extended Products Table with Slug and Gallery Images
         conn.execute('''
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,6 +53,17 @@ def init_db():
                 description TEXT,
                 is_new INTEGER DEFAULT 0,
                 is_top INTEGER DEFAULT 0
+            )
+        ''')
+        
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS reviews (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_id INTEGER,
+                customer_name TEXT NOT NULL,
+                rating INTEGER DEFAULT 5,
+                comment TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -80,8 +90,9 @@ def init_db():
             'header_banner_url': 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80',
             'banner_link': '#',
             'phone': '+880 1568-022033',
-            'whatsapp': '+880 1568-022033',
+            'whatsapp': '+8801568022033',
             'fb_pixel_id': '',
+            'google_site_verification': '',
             'admin_password': 'admin123#novacart',
             'notice_text': '🚀 ক্যাশ অন ডেলিভারি সারা বাংলাদেশে! ৩ দিনের মধ্যে নিশ্চিত রিটার্ন পলিসি।'
         }
@@ -112,6 +123,14 @@ def init_db():
             ]
             cursor.executemany("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
             
+            sample_reviews = [
+                (1, "মোঃ আরমান হোসেন", 5, "পণ্যটি সত্যিই অনেক সুন্দর এবং বাচ্চার খুব পছন্দ হয়েছে। ধন্যবাদ ডেলিভারি ম্যান ভাইয়াকে।"),
+                (1, "সাবিহা রহমান", 5, "খুব দ্রুত ডেলিভারি পেয়েছি। প্রোডাক্টের কোয়ালিটি ১০০/১০০।"),
+                (2, "তানজিনা আক্তার", 5, "রান্নার সময় অনেক বেঁচে যায়! ব্লেডগুলো খুব ধারালো ও শক্তপোক্ত।"),
+                (3, "রাফসান আহমদ", 5, "সাউন্ড কোয়ালিটি ও বেস জাস্ট অসাধারণ! এই বাজেটে সেরা ইয়ারবাড।")
+            ]
+            cursor.executemany("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)", sample_reviews)
+
             categories = [
                 ("Toys", "fa-robot"),
                 ("Kitchen & Dining", "fa-utensils"),
@@ -158,14 +177,12 @@ def index():
                 
     return render_template('index.html', products=products, categories=categories, current_cat=cat, settings=settings)
 
-# High-Converting Custom Landing Page Route via Product Slug
 @app.route('/p/<slug>')
 def product_landing(slug):
     settings = get_settings()
     with get_db() as conn:
         product = conn.execute("SELECT * FROM products WHERE slug = ?", (slug,)).fetchone()
         if not product:
-            # Fallback check by ID if numeric passed
             if slug.isdigit():
                 product = conn.execute("SELECT * FROM products WHERE id = ?", (int(slug),)).fetchone()
             if not product:
@@ -179,9 +196,24 @@ def product_landing(slug):
         if product['features']:
             features = [f.strip() for f in product['features'].split('|') if f.strip()]
             
-        related = conn.execute("SELECT * FROM products WHERE category = ? AND id != ? LIMIT 4", (product['category'], product['id'])).fetchall()
+        reviews = conn.execute("SELECT * FROM reviews WHERE product_id = ? ORDER BY id DESC", (product['id'],)).fetchall()
         
-    return render_template('landing_page.html', product=product, gallery=gallery, features=features, related=related, settings=settings)
+    return render_template('landing_page.html', product=product, gallery=gallery, features=features, reviews=reviews, settings=settings)
+
+@app.route('/add_review/<int:product_id>', methods=['POST'])
+def add_review(product_id):
+    name = request.form.get('customer_name')
+    rating = int(request.form.get('rating', 5))
+    comment = request.form.get('comment')
+    
+    with get_db() as conn:
+        product = conn.execute("SELECT slug FROM products WHERE id = ?", (product_id,)).fetchone()
+        conn.execute("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)",
+                     (product_id, name, rating, comment))
+        conn.commit()
+        
+    flash('ধন্যবাদ! আপনার রিভিউটি সফলভাবে যুক্ত হয়েছে।', 'success')
+    return redirect(url_for('product_landing', slug=product['slug']))
 
 @app.route('/quick_order/<int:product_id>', methods=['POST'])
 def quick_order(product_id):
@@ -224,6 +256,44 @@ def track_order():
         with get_db() as conn:
             order = conn.execute("SELECT * FROM orders WHERE id = ? OR phone = ?", (query, query)).fetchone()
     return render_template('track.html', order=order, searched=searched)
+
+# Dynamic Sitemap.xml for Google Search Console
+@app.route('/sitemap.xml')
+def sitemap():
+    host = request.host_url.rstrip('/')
+    with get_db() as conn:
+        products = conn.execute("SELECT slug FROM products").fetchall()
+    
+    xml = '<?xml version="1.0" encoding="UTF-8"?>
+'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+'
+    
+    # Homepage
+    xml += f'  <url><loc>{host}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+'
+    
+    # Track Page
+    xml += f'  <url><loc>{host}/track</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+'
+    
+    # Products Landing Pages
+    for p in products:
+        xml += f'  <url><loc>{host}/p/{p["slug"]}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+'
+        
+    xml += '</urlset>'
+    return Response(xml, mimetype='application/xml')
+
+# Dynamic Robots.txt for Search Engines
+@app.route('/robots.txt')
+def robots():
+    host = request.host_url.rstrip('/')
+    txt = f"User-agent: *
+Allow: /
+Disallow: /admin
+Sitemap: {host}/sitemap.xml"
+    return Response(txt, mimetype='text/plain')
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -275,7 +345,7 @@ def admin():
                 flash('ক্যাটাগরি যুক্ত করা হয়েছে!', 'success')
                 
             elif action == 'update_settings':
-                fields = ['site_name', 'tagline', 'logo_url', 'header_banner_url', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'admin_password', 'notice_text']
+                fields = ['site_name', 'tagline', 'logo_url', 'header_banner_url', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
                 for field in fields:
                     val = request.form.get(field, '')
                     conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
