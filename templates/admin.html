@@ -1,17 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white p-4 rounded shadow-sm border">
-    <h4 class="fw-bold mb-4 text-primary"><i class="fa-solid fa-user-gear me-2"></i>DropShipping BD অ্যাডমিন প্যানেল</h4>
+<div class="bg-white p-4 rounded-3 shadow-sm border">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h4 class="fw-bold text-danger m-0"><i class="fa-solid fa-sliders me-2"></i>{{ site_settings.site_name }} ফুল অ্যাডমিন কন্ট্রোল</h4>
+        <a href="/admin/logout" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-right-from-bracket me-1"></i> লগআউট</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show small py-2">{{ message }}
+            <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
     <ul class="nav nav-tabs mb-4" id="adminTab">
       <li class="nav-item">
-        <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 অর্ডারসমূহ ({{ orders|length }})</button>
+        <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#orders">📦 কাস্টমার অর্ডারসমূহ ({{ orders|length }})</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#products">🛍️ প্রডাক্ট লিস্ট</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন প্রডাক্ট</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন প্রডাক্ট যোগ</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস (লোগো/ব্যানার/পাসওয়ার্ড/পিক্সেল)</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#category">📁 ক্যাটাগরি ম্যানেজমেন্ট</button>
@@ -43,7 +59,7 @@
                         <td>{{ o.address }}<br><small class="text-primary">{{ o.delivery_area }}</small></td>
                         <td>{{ o.items_summary }}</td>
                         <td class="fw-bold text-danger">৳{{ o.total_price|int }}</td>
-                        <td><span class="badge bg-info text-dark">{{ o.status }}</span></td>
+                        <td><span class="badge bg-info text-dark fs-6">{{ o.status }}</span></td>
                         <td>
                             <a href="/admin/update_order/{{ o.id }}/Confirmed" class="btn btn-success btn-sm py-0">Confirm</a>
                             <a href="/admin/update_order/{{ o.id }}/Shipped" class="btn btn-warning btn-sm py-0">Ship</a>
@@ -52,6 +68,75 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+      </div>
+
+      <!-- Site Settings Tab (Logo, Banner, Password, FB Pixel) -->
+      <div class="tab-pane fade" id="settings">
+        <div class="col-md-9 mx-auto">
+            <div class="card p-4 border shadow-sm rounded-3">
+                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং ও মার্কেটিং সেটিংস</h5>
+                <form action="/admin" method="POST">
+                    <input type="hidden" name="action" value="update_settings">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">সাইটের নাম</label>
+                            <input type="text" name="site_name" class="form-control" value="{{ settings.site_name }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">ট্যাগলাইন (Tagline)</label>
+                            <input type="text" name="tagline" class="form-control" value="{{ settings.tagline }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">লোগো ইউআরএল (Logo Image URL)</label>
+                        <input type="text" name="logo_url" class="form-control" placeholder="যেমন: https://i.imgur.com/your-logo.png" value="{{ settings.logo_url }}">
+                        <small class="text-muted">লোগোর লিংক না দিলে নাম টেক্সট আকারে দেখাবে।</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">হেডার অফার ব্যানার ইউআরএল (Header Banner URL)</label>
+                        <input type="text" name="header_banner_url" class="form-control" placeholder="যেমন: https://i.imgur.com/banner.jpg" value="{{ settings.header_banner_url }}">
+                        <small class="text-muted">হোমপেজের শীর্ষে বড় ব্যানার হিসেবে দেখাবে।</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">ব্যানার ক্লিক লিংক (Optional)</label>
+                        <input type="text" name="banner_link" class="form-control" value="{{ settings.banner_link }}">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">ফোন নম্বর</label>
+                            <input type="text" name="phone" class="form-control" value="{{ settings.phone }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold">হোয়াটসঅ্যাপ নম্বর</label>
+                            <input type="text" name="whatsapp" class="form-control" value="{{ settings.whatsapp }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-danger"><i class="fa-brands fa-facebook me-1"></i> ফেসবুক পিক্সেল আইডি (Facebook Pixel ID)</label>
+                        <input type="text" name="fb_pixel_id" class="form-control" placeholder="যেমন: 123456789012345" value="{{ settings.fb_pixel_id }}">
+                        <small class="text-muted">ফেসবুক এড চালানোর জন্য পিক্সেল আইডি দিলে সেলস ও কনভার্সন ট্র্যাক হবে।</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-key me-1"></i> অ্যাডমিন পাসওয়ার্ড (Admin Password)</label>
+                        <input type="text" name="admin_password" class="form-control fw-bold" value="{{ settings.admin_password }}" required>
+                        <small class="text-danger">এই পাসওয়ার্ড দিয়ে শুধু আপনি অ্যাডমিনে ঢুকতে পারবেন।</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">টপ নোটিশ টেক্সট (Top Notice Bar)</label>
+                        <input type="text" name="notice_text" class="form-control" value="{{ settings.notice_text }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold mt-2">সেটিংস সেভ করুন</button>
+                </form>
+            </div>
         </div>
       </div>
 
@@ -93,7 +178,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <label class="form-label small fw-bold">প্রডাক্ট কোড</label>
-                            <input type="text" name="code" class="form-control form-control-sm" placeholder="যেমন: DS-101" required>
+                            <input type="text" name="code" class="form-control form-control-sm" placeholder="যেমন: NC-101" required>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label small fw-bold">ক্যাটাগরি</label>
@@ -136,7 +221,7 @@
                             <label class="form-check-label small" for="isTop">Top Selling-এ দেখাবে</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">প্রডাক্ট সেভ করুন</button>
+                    <button type="submit" class="btn btn-success w-100 fw-bold">প্রডাক্ট সেভ করুন</button>
                 </form>
             </div>
         </div>
@@ -154,10 +239,10 @@
                         <input type="text" name="cat_name" class="form-control form-control-sm" placeholder="যেমন: Organic Food" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">FontAwesome আইকন ক্লাস (ঐচ্ছিক)</label>
+                        <label class="form-label small fw-bold">FontAwesome আইকন ক্লাস</label>
                         <input type="text" name="icon" class="form-control form-control-sm" placeholder="যেমন: fa-leaf" value="fa-tags">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">ক্যাটাগরি সেভ করুন</button>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">ক্যাটাগরি সেভ করুন</button>
                 </form>
 
                 <hr class="my-4">

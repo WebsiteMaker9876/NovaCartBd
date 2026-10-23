@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন লগইন - {{ site_settings.site_name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light d-flex align-items-center vh-100">
+    <div class="container">
+        <div class="col-md-4 mx-auto">
+            <div class="card p-4 shadow border-0 rounded-3">
+                <div class="text-center mb-3">
+                    <h4 class="fw-bold text-danger"><i class="fa-solid fa-user-shield me-2"></i>অ্যাডমিন লগইন</h4>
+                    <p class="text-muted small">শুধু অ্যাডমিন প্রবেশ করতে পারবেন</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} small py-2">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form action="/admin/login" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">অ্যাডমিন পাসওয়ার্ড</label>
+                        <input type="password" name="password" class="form-control" placeholder="পাসওয়ার্ড দিন" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">লগইন করুন</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="/" class="small text-muted">হোমপেজে ফিরে যান</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

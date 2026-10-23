@@ -3,120 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DropShipping BD - Trusted Business in Bangladesh</title>
+    <title>{{ site_settings.site_name }} - {{ site_settings.tagline }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; color: #333; }
-        .top-header { background-color: #ffffff; border-bottom: 1px solid #e9ecef; padding: 12px 0; }
-        .logo-text { font-size: 26px; font-weight: 800; color: #2b3990; text-decoration: none; letter-spacing: -0.5px; }
-        .logo-text span { color: #e6194b; }
-        .call-now { font-size: 14px; font-weight: 600; color: #2b3990; }
-        .nav-main { background-color: #2b3990; }
-        .nav-main .nav-link { color: #ffffff !important; font-weight: 500; font-size: 15px; padding: 10px 16px; }
-        .nav-main .nav-link:hover { background-color: #1e2867; }
-        
-        /* Product Card Design */
-        .product-card { border: 1px solid #e3e6ef; border-radius: 8px; background: #fff; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-3px); }
-        .badge-discount { position: absolute; top: 10px; right: 10px; background: #e6194b; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; }
-        .price-sale { color: #2b3990; font-weight: 700; font-size: 18px; }
-        .price-regular { text-decoration: line-through; color: #888; font-size: 13px; margin-left: 5px; }
-        .btn-buy { background-color: #e6194b; color: #fff; font-weight: 600; border-radius: 6px; border: none; width: 100%; transition: 0.2s; }
-        .btn-buy:hover { background-color: #c0133c; color: #fff; }
-        
-        /* Features Banner */
-        .feature-box { background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
-        .feature-icon { font-size: 24px; color: #2b3990; margin-right: 12px; }
+    
+    <!-- Facebook Pixel Code Integration -->
+    {% if site_settings.fb_pixel_id %}
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '{{ site_settings.fb_pixel_id }}');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id={{ site_settings.fb_pixel_id }}&ev=PageView&noscript=1"
+    /></noscript>
+    {% endif %}
 
-        footer { background-color: #1a1e36; color: #b0b7c3; padding: 40px 0 20px 0; margin-top: 60px; }
-        footer h6 { color: #ffffff; font-weight: 700; margin-bottom: 15px; }
-        footer a { color: #b0b7c3; text-decoration: none; }
-        footer a:hover { color: #ffffff; }
+    <style>
+        :root {
+            --primary-color: #ff5722;
+            --primary-hover: #e64a19;
+            --dark-color: #1a1e29;
+            --bg-color: #f4f6f9;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-color); color: #333; }
         
-        /* Bottom Mobile Bar */
-        .mobile-bottom-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #ddd; z-index: 9999; padding: 8px 0; text-align: center; }
+        /* Top Announcement Bar */
+        .announcement-bar { background: linear-gradient(90deg, #1a1e29, #2c3245); color: #fff; font-size: 13px; padding: 7px 0; font-weight: 500; }
+        
+        /* Premium Navbar */
+        .main-header { background: #ffffff; border-bottom: 2px solid #eee; padding: 12px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .brand-logo-img { max-height: 45px; object-fit: contain; }
+        .brand-text { font-size: 26px; font-weight: 900; color: var(--primary-color); letter-spacing: -0.5px; text-decoration: none; }
+        
+        /* Category Bar */
+        .category-nav { background: #ffffff; border-bottom: 1px solid #e0e0e0; }
+        .category-nav .nav-link { color: #333; font-weight: 600; font-size: 14px; padding: 10px 16px; transition: 0.2s; }
+        .category-nav .nav-link:hover { color: var(--primary-color); background: #fafafa; }
+
+        /* Premium Product Cards */
+        .product-card { border: none; border-radius: 12px; background: #ffffff; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .badge-discount { position: absolute; top: 10px; left: 10px; background: #d32f2f; color: white; padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 11px; z-index: 2; }
+        .price-sale { color: var(--primary-color); font-weight: 800; font-size: 19px; }
+        .price-regular { text-decoration: line-through; color: #999; font-size: 13px; margin-left: 6px; }
+        
+        .btn-order-now { background: linear-gradient(135deg, #ff5722, #f4511e); color: #ffffff; font-weight: 700; border-radius: 8px; border: none; width: 100%; padding: 8px 0; transition: 0.3s; }
+        .btn-order-now:hover { background: linear-gradient(135deg, #e64a19, #d84315); color: #fff; transform: scale(1.02); }
+
+        /* Header Banner Box */
+        .hero-banner-box { border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 25px; }
+        .hero-banner-img { width: 100%; max-height: 380px; object-fit: cover; }
+
+        footer { background-color: var(--dark-color); color: #a0a5b5; padding: 45px 0 20px 0; margin-top: 60px; }
+        footer h6 { color: #ffffff; font-weight: 700; }
+        footer a { color: #a0a5b5; text-decoration: none; }
+        footer a:hover { color: #ffffff; }
+
+        /* Mobile Bottom Nav */
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e0e0e0; z-index: 9999; padding: 8px 0; }
         @media (max-width: 768px) {
-            .mobile-bottom-bar { display: flex; justify-content: space-around; }
+            .mobile-nav { display: flex; justify-content: space-around; }
             body { padding-bottom: 60px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Top Header -->
-    <header class="top-header">
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar text-center">
+        <div class="container">
+            {{ site_settings.notice_text }} | 💬 WhatsApp: <a href="https://wa.me/{{ site_settings.whatsapp|replace(' ', '') }}" class="text-warning text-decoration-none fw-bold" target="_blank">{{ site_settings.whatsapp }}</a>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
-            <a href="/" class="logo-text">DropShipping<span>BD</span></a>
+            <a href="/" class="d-flex align-items-center text-decoration-none">
+                {% if site_settings.logo_url %}
+                <img src="{{ site_settings.logo_url }}" alt="{{ site_settings.site_name }}" class="brand-logo-img me-2">
+                {% else %}
+                <span class="brand-text">🛒 {{ site_settings.site_name }}</span>
+                {% endif %}
+            </a>
+
             <div class="d-flex align-items-center">
-                <div class="call-now me-3 d-none d-md-block">
-                    <i class="fa-solid fa-headset text-danger me-1"></i> Call Us: <strong>01630990000</strong>
-                </div>
-                <a href="/track" class="btn btn-outline-primary btn-sm me-2"><i class="fa-solid fa-truck-fast"></i> ট্র্যাকিং</a>
-                <a href="/admin" class="btn btn-dark btn-sm"><i class="fa-solid fa-user-gear"></i> অ্যাডমিন</a>
+                <a href="tel:{{ site_settings.phone }}" class="btn btn-outline-danger btn-sm me-2 d-none d-md-inline-block fw-bold"><i class="fa-solid fa-headset me-1"></i> {{ site_settings.phone }}</a>
+                <a href="/track" class="btn btn-light border btn-sm me-2 fw-semibold"><i class="fa-solid fa-truck-fast text-primary me-1"></i> অর্ডার ট্র্যাকিং</a>
+                <a href="/admin" class="btn btn-dark btn-sm fw-semibold"><i class="fa-solid fa-lock text-warning me-1"></i> অ্যাডমিন</a>
             </div>
         </div>
     </header>
 
-    <!-- Main Navigation Bar -->
-    <nav class="navbar navbar-expand-lg nav-main p-0 d-none d-lg-block">
-        <div class="container">
-            <div class="navbar-nav">
-                <a class="nav-link" href="/"><i class="fa-solid fa-house me-1"></i> হোমপেজ</a>
-                <a class="nav-link" href="/?category=Winter">Winter</a>
-                <a class="nav-link" href="/?category=Men's Fashion">Men's Fashion</a>
-                <a class="nav-link" href="/?category=Women's Fashion">Women's Fashion</a>
-                <a class="nav-link" href="/?category=Gadgets & Electronics">Gadgets & Electronics</a>
-                <a class="nav-link" href="/?category=Watches">Watches</a>
-                <a class="nav-link" href="/?category=Kids Zone">Kids Zone</a>
-            </div>
-        </div>
-    </nav>
-
     <div class="container my-4">
         {% block content %}{% endblock %}
-    </div>
-
-    <!-- Feature Icons -->
-    <div class="container my-5">
-        <div class="row g-3">
-            <div class="col-6 col-md-3">
-                <div class="feature-box d-flex align-items-center">
-                    <i class="fa-solid fa-shield-halved feature-icon"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">High-quality Goods</h6>
-                        <small class="text-muted" style="font-size: 12px;">Top items for less</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="feature-box d-flex align-items-center">
-                    <i class="fa-solid fa-comments feature-icon"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">24/7 Live Chat</h6>
-                        <small class="text-muted" style="font-size: 12px;">Instant assistance</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="feature-box d-flex align-items-center">
-                    <i class="fa-solid fa-truck-ramp-box feature-icon"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Express Shipping</h6>
-                        <small class="text-muted" style="font-size: 12px;">Fast & reliable</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="feature-box d-flex align-items-center">
-                    <i class="fa-solid fa-wallet feature-icon"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Cash on Delivery</h6>
-                        <small class="text-muted" style="font-size: 12px;">Safe payment</small>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Footer -->
@@ -124,38 +113,47 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-5">
-                    <a href="/" class="logo-text text-white mb-2 d-inline-block">DropShipping<span class="text-danger">BD</span></a>
-                    <p class="small text-muted">বাংলাদেশের অন্যতম বিশ্বস্ত ই-কমার্স প্ল্যাটফর্ম। ক্যাশ অন ডেলিভারিতে পুরো বাংলাদেশে হোম ডেলিভারি সুবিধা।</p>
+                    <h5 class="text-white fw-bold mb-2">{{ site_settings.site_name }}</h5>
+                    <p class="small text-muted mb-3">{{ site_settings.tagline }} - বাংলাদেশের অন্যতম বিশ্বস্ত অনলাইন শপ। সারা দেশে ক্যাশ অন ডেলিভারিতে প্রডাক্ট হোম ডেলিভারি দেওয়া হয়।</p>
                 </div>
                 <div class="col-md-3">
-                    <h6>Quick Links</h6>
+                    <h6 class="mb-3">Quick Links</h6>
                     <ul class="list-unstyled small">
                         <li class="mb-1"><a href="/">হোমপেজ</a></li>
-                        <li class="mb-1"><a href="/track">অর্ডার ট্র্যাকিং</a></li>
-                        <li class="mb-1"><a href="/admin">অ্যাডমিন প্যানেল</a></li>
+                        <li class="mb-1"><a href="/track">অর্ডার স্ট্যাটাস ট্র্যাকিং</a></li>
+                        <li class="mb-1"><a href="/admin">অ্যাডমিন কন্ট্রোল প্যানেল</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
-                    <h6>Contact Us</h6>
-                    <p class="small mb-1"><i class="fa-solid fa-phone me-2 text-danger"></i> 01630990000</p>
-                    <p class="small mb-1"><i class="fa-solid fa-envelope me-2 text-danger"></i> support@dropshipping.com.bd</p>
+                    <h6 class="mb-3">Customer Support</h6>
+                    <p class="small mb-1"><i class="fa-solid fa-phone text-warning me-2"></i> {{ site_settings.phone }}</p>
+                    <p class="small mb-1"><i class="fa-brands fa-whatsapp text-success me-2"></i> {{ site_settings.whatsapp }}</p>
+                    <p class="small"><i class="fa-solid fa-shield-halved text-info me-2"></i> ১০০% অরিজিনাল প্রডাক্ট গ্যারান্টি</p>
                 </div>
             </div>
             <hr class="my-4 border-secondary">
             <div class="text-center small text-muted">
-                All rights reserved © 2026 DropShipping BD.
+                © 2026 {{ site_settings.site_name }}. All rights reserved.
             </div>
         </div>
     </footer>
 
-    <!-- Mobile Navigation Bar -->
-    <div class="mobile-bottom-bar">
-        <a href="/" class="text-dark text-decoration-none small"><i class="fa-solid fa-house d-block fs-5 text-primary"></i> Home</a>
-        <a href="/track" class="text-dark text-decoration-none small"><i class="fa-solid fa-truck-fast d-block fs-5 text-danger"></i> Track</a>
-        <a href="tel:01630990000" class="text-dark text-decoration-none small"><i class="fa-solid fa-phone d-block fs-5 text-success"></i> Call</a>
-        <a href="/admin" class="text-dark text-decoration-none small"><i class="fa-solid fa-user-shield d-block fs-5 text-dark"></i> Admin</a>
+    <!-- Mobile Nav Bar -->
+    <div class="mobile-nav">
+        <a href="/" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-house d-block fs-5 text-danger"></i> Home</a>
+        <a href="/track" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-truck-fast d-block fs-5 text-primary"></i> Track</a>
+        <a href="https://wa.me/{{ site_settings.whatsapp|replace(' ', '') }}" target="_blank" class="text-dark text-decoration-none text-center small"><i class="fa-brands fa-whatsapp d-block fs-5 text-success"></i> WhatsApp</a>
+        <a href="/admin" class="text-dark text-decoration-none text-center small"><i class="fa-solid fa-user-gear d-block fs-5 text-dark"></i> Admin</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Track Pixel Lead/Order Event Script
+        function trackPixelOrder(productName, price) {
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {content_name: productName, value: price, currency: 'BDT'});
+            }
+        }
+    </script>
 </body>
 </html>

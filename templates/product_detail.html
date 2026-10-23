@@ -1,46 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="bg-white p-4 rounded shadow-sm border mb-4">
+<div class="bg-white p-4 rounded-3 shadow-sm border mb-4">
     <div class="row">
         <div class="col-md-5 mb-4 mb-md-0">
-            <img src="{{ product.image }}" class="img-fluid rounded border w-100" style="max-height: 380px; object-fit: cover;">
+            <img src="{{ product.image }}" class="img-fluid rounded-3 border w-100 shadow-sm" style="max-height: 400px; object-fit: cover;">
         </div>
 
         <div class="col-md-7">
-            <span class="badge bg-light text-primary border mb-2">{{ product.category }} | কোড: {{ product.code }}</span>
-            <h4 class="fw-bold text-dark">{{ product.name }}</h4>
+            <span class="badge bg-danger mb-2 px-3 py-2 fs-6">{{ product.category }} | কোড: {{ product.code }}</span>
+            <h3 class="fw-bold text-dark">{{ product.name }}</h3>
             
             <div class="my-3">
                 <span class="fs-2 fw-bold text-danger">৳ {{ product.sale_price|int }}</span>
                 <span class="text-decoration-line-through text-muted fs-5 ms-2">৳ {{ product.regular_price|int }}</span>
             </div>
 
-            <p class="text-muted small mb-4">{{ product.description }}</p>
+            <p class="text-secondary small mb-4">{{ product.description }}</p>
             
-            <div class="card p-3 border-danger bg-light mb-3">
-                <h6 class="fw-bold text-danger mb-3"><i class="fa-solid fa-truck-arrow-right me-1"></i> সহজে অর্ডার করতে আপনার তথ্য দিন (ক্যাশ অন ডেলিভারি)</h6>
-                <form action="/quick_order/{{ product.id }}" method="POST">
+            <!-- Fast Order Form for FB Ads Conversion -->
+            <div class="card p-3 border-danger bg-light rounded-3">
+                <h5 class="fw-bold text-danger mb-3"><i class="fa-solid fa-truck-fast me-2"></i> দ্রুত অর্ডার করতে নিচের তথ্যগুলো দিন (ক্যাশ অন ডেলিভারি)</h5>
+                <form action="/quick_order/{{ product.id }}" method="POST" onsubmit="trackPixelOrder('{{ product.name }}', {{ product.sale_price }})">
                     <div class="mb-2">
-                        <label class="form-label small fw-semibold">আপনার নাম *</label>
-                        <input type="text" name="name" class="form-control form-control-sm" placeholder="পূর্ণ নাম লিখুন" required>
+                        <label class="form-label small fw-bold">আপনার নাম *</label>
+                        <input type="text" name="name" class="form-control" placeholder="আপনার পূর্ণ নাম" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label small fw-semibold">মোবাইল নম্বর *</label>
-                        <input type="tel" name="phone" class="form-control form-control-sm" placeholder="০১৭xxxxxxxx" required>
+                        <label class="form-label small fw-bold">মোবাইল নম্বর *</label>
+                        <input type="tel" name="phone" class="form-control" placeholder="০১৭xxxxxxxx" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label small fw-semibold">সম্পূর্ণ ঠিকানা *</label>
-                        <textarea name="address" class="form-control form-control-sm" rows="2" placeholder="বাসা/গ্রাম, থানা, জেলা..." required></textarea>
+                        <label class="form-label small fw-bold">সম্পূর্ণ ঠিকানা *</label>
+                        <textarea name="address" class="form-control" rows="2" placeholder="বাসা/গ্রাম, থানা, জেলা..." required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-semibold">ডেলিভারি এলাকা *</label>
-                        <select name="area" class="form-select form-select-sm" required>
+                        <label class="form-label small fw-bold">ডেলিভারি এলাকা *</label>
+                        <select name="area" class="form-select" required>
                             <option value="dhaka_inside">ঢাকা সিটি (৬০ টাকা)</option>
                             <option value="dhaka_sub">ঢাকা সাব এরিয়া (১০০ টাকা)</option>
                             <option value="outside_dhaka">ঢাকার বাইরে (১২০ টাকা)</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-buy btn-lg fs-6 py-2 w-100 fw-bold"><i class="fa-solid fa-check-circle me-1"></i> অর্ডার কনফার্ম করুন</button>
+                    <button type="submit" class="btn btn-order-now btn-lg py-3 fw-bold fs-5 shadow"><i class="fa-solid fa-check-circle me-1"></i> অর্ডার কনফার্ম করুন (৳{{ product.sale_price|int }})</button>
                 </form>
             </div>
         </div>
@@ -53,11 +54,11 @@
     {% for r in related %}
     <div class="col">
         <div class="card product-card h-100 p-2">
-            <img src="{{ r.image }}" class="card-img-top" style="height: 130px; object-fit: cover;">
+            <img src="{{ r.image }}" class="card-img-top" style="height: 140px; object-fit: cover; border-radius: 8px;">
             <div class="card-body p-1 mt-2 text-center">
-                <h6 class="fw-semibold text-truncate" style="font-size: 12px;">{{ r.name }}</h6>
+                <h6 class="fw-bold text-truncate" style="font-size: 13px;">{{ r.name }}</h6>
                 <div class="text-danger fw-bold">৳{{ r.sale_price|int }}</div>
-                <a href="/product/{{ r.id }}" class="btn btn-outline-danger btn-sm w-100 mt-2 py-0" style="font-size: 12px;">দেখুন</a>
+                <a href="/product/{{ r.id }}" class="btn btn-outline-danger btn-sm w-100 mt-2 py-1 fs-6">দেখুন</a>
             </div>
         </div>
     </div>

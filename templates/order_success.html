@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="col-md-6 mx-auto my-4">
-    <div class="card p-4 shadow-sm border-0 text-center bg-white">
+    <div class="card p-4 shadow-sm border-0 text-center bg-white rounded-3">
         <div class="text-success fs-1 mb-2"><i class="fa-solid fa-circle-check"></i></div>
-        <h4 class="fw-bold text-success mb-2">আপনার অর্ডারটি সফলভাবে জমা হয়েছে!</h4>
-        <p class="text-muted small">খুব শীঘ্রই আমাদের সাপোর্ট টিম কল করে অর্ডারটি কনফার্ম করবে।</p>
+        <h4 class="fw-bold text-success mb-2">🎉 আপনার অর্ডারটি সফলভাবে জমা হয়েছে!</h4>
+        <p class="text-muted small">খুব শীঘ্রই আমাদের সাপোর্ট প্রতিনিধি ফোন করে অর্ডার কনফার্ম করবেন।</p>
         
         <div class="bg-light p-3 rounded text-start my-3 border">
-            <p class="mb-1 small"><strong>অর্ডার আইডি:</strong> #{{ order_id }}</p>
+            <p class="mb-1 small"><strong>অর্ডার নম্বর:</strong> #{{ order_id }}</p>
             <p class="mb-1 small"><strong>পণ্য:</strong> {{ product.name }} (কোড: {{ product.code }})</p>
-            <p class="mb-1 small"><strong>কাস্টমার:</strong> {{ name }} ({{ phone }})</p>
+            <p class="mb-1 small"><strong>গ্রাহকের নাম:</strong> {{ name }} ({{ phone }})</p>
             <p class="mb-1 small"><strong>ঠিকানা:</strong> {{ address }}</p>
             <p class="mb-1 small"><strong>ডেলিভারি চার্জ:</strong> ৳ {{ charge|int }}</p>
             <hr class="my-2">
             <p class="mb-0 fs-5 fw-bold text-danger">মোট প্রদেয়: ৳ {{ total|int }} (ক্যাশ অন ডেলিভারি)</p>
         </div>
 
-        <a href="/" class="btn btn-primary"><i class="fa-solid fa-house me-1"></i> হোমে ফিরে যান</a>
+        <a href="/" class="btn btn-danger btn-lg px-4"><i class="fa-solid fa-house me-1"></i> হোমে ফিরে যান</a>
     </div>
 </div>
 {% endblock %}
