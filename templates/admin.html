@@ -27,7 +27,7 @@
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#add">➕ নতুন ল্যান্ডিং পেজ ও ছবি আপলোড</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস & লোগো আপলোড</button>
+        <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#settings">⚙️ সাইট সেটিংস & ব্যানার/লোগো আপলোড</button>
       </li>
       <li class="nav-item">
         <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#category">📁 ক্যাটাগরি ম্যানেজমেন্ট</button>
@@ -71,11 +71,11 @@
         </div>
       </div>
 
-      <!-- Site Settings & Logo Upload Tab -->
+      <!-- Site Settings & Banner/Logo Upload Tab -->
       <div class="tab-pane fade" id="settings">
         <div class="col-md-9 mx-auto">
             <div class="card p-4 border shadow-sm rounded-3">
-                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং, লোগো আপলোড & গুগল কনসোল</h5>
+                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-gears me-2"></i>সাইট ব্র্যান্ডিং, ব্যানার & লোগো আপলোড সেটিংস</h5>
                 <form action="/admin" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update_settings">
                     <div class="row">
@@ -100,9 +100,22 @@
                         {% endif %}
                     </div>
 
+                    <div class="mb-3 bg-light p-3 border rounded">
+                        <label class="form-label small fw-bold text-danger"><i class="fa-solid fa-image me-1"></i> হেডার অফার ব্যানার আপলোড করুন (Device থেকে)</label>
+                        <input type="file" name="banner_file" class="form-control" accept="image/*">
+                        <small class="text-muted d-block mt-1">অথবা চাইলে ছবির ডিরেক্ট লিংক নিচে দিতে পারেন:</small>
+                        <input type="text" name="banner_url_text" class="form-control form-control-sm mt-1" placeholder="https://..." value="{{ settings.header_banner_url }}">
+                        {% if settings.header_banner_url %}
+                        <div class="mt-2">
+                            <small class="text-muted">বর্তমান ব্যানার প্রিভিউ:</small><br>
+                            <img src="{{ settings.header_banner_url }}" height="80" class="border rounded w-100 mt-1" style="object-fit:cover;">
+                        </div>
+                        {% endif %}
+                    </div>
+
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">হেডার অফার ব্যানার ইউআরএল</label>
-                        <input type="text" name="header_banner_url" class="form-control" value="{{ settings.header_banner_url }}">
+                        <label class="form-label small fw-bold">ব্যানার ক্লিক লিংক (Banner Click Link URL)</label>
+                        <input type="text" name="banner_link" class="form-control" value="{{ settings.banner_link }}">
                     </div>
 
                     <div class="row">
@@ -136,7 +149,7 @@
                         <input type="text" name="notice_text" class="form-control" value="{{ settings.notice_text }}">
                     </div>
 
-                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold mt-2">সেটিংস সেভ করুন</button>
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold mt-2">সেটিংস ও ব্যানার সেভ করুন</button>
                 </form>
             </div>
         </div>
@@ -206,16 +219,15 @@
                     </div>
 
                     <div class="mb-3 bg-light p-3 border rounded">
-                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> ১. প্রধান কভার ছবি আপলোড করুন (Device থেকে ফাইল সিলেক্ট করুন)</label>
+                        <label class="form-label small fw-bold text-success"><i class="fa-solid fa-image me-1"></i> ১. প্রধান কভার ছবি আপলোড করুন (Device থেকে)</label>
                         <input type="file" name="image_file" class="form-control" accept="image/*">
-                        <small class="text-muted d-block mt-1">অথবা চাইলে ছবির ডিরেক্ট লিংকও নিচে দিতে পারেন:</small>
+                        <small class="text-muted d-block mt-1">অথবা ডিরেক্ট লিংক দিতে পারেন:</small>
                         <input type="text" name="image_url" class="form-control form-control-sm mt-1" placeholder="https://...">
                     </div>
 
                     <div class="mb-3 bg-light p-3 border rounded">
                         <label class="form-label small fw-bold text-primary"><i class="fa-solid fa-images me-1"></i> ২. স্লাইডারের জন্য একাধিক ছবি একসাথে সিলেক্ট করুন (Multiple Images)</label>
                         <input type="file" name="gallery_files" class="form-control" accept="image/*" multiple>
-                        <small class="text-muted d-block mt-1">একাধিক ছবি সিলেক্ট করতে আপনার ডিভাইস থেকে একসাথে একাধিক ছবি মার্ক করুন।</small>
                     </div>
 
                     <div class="mb-3">
