@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Privacy Policy - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="col-md-10 mx-auto">
+    <div class="bg-white p-4 p-md-5 rounded-3 shadow-sm border">
+        <h2 class="fw-bold text-dark mb-4 border-bottom pb-2">Privacy Policy (গোপনীয়তা নীতি)</h2>
+        <p class="text-secondary">স্বাগতম <strong>{{ site_settings.site_name }}</strong>-এ। আমরা আপনার ব্যক্তিগত তথ্যের গোপনীয়তা রক্ষা করতে প্রতিশ্রুতিবদ্ধ। এই নীতিমালায় ব্যাখ্যা করা হয়েছে যে আমরা আপনার তথ্য কীভাবে সংগ্রহ, ব্যবহার এবং সুরক্ষিত রাখি।</p>
+        
+        <h5 class="fw-bold text-danger mt-4">১. আমরা যে তথ্য সংগ্রহ করি</h5>
+        <p class="text-secondary">আপনি যখন আমাদের সাইটে কোনো প্রোডাক্ট অর্ডার করেন, তখন আমরা আপনার নাম, ঠিকানা, মোবাইল নম্বর এবং ডেলিভারির এলাকা সংগ্রহ করে থাকি।</p>
+
+        <h5 class="fw-bold text-danger mt-4">২. তথ্যের ব্যবহার</h5>
+        <p class="text-secondary">সংগৃহীত তথ্য শুধুমাত্র আপনার অর্ডার প্রক্রিয়াকরণ, পণ্য ডেলিভারি প্রদান এবং কাস্টমার সাপোর্ট নিশ্চিত করার জন্য ব্যবহৃত হয়। আমরা কখনোই কোনো তৃতীয় পক্ষের কাছে আপনার তথ্য বিক্রি বা শেয়ার করি না।</p>
+
+        <h5 class="fw-bold text-danger mt-4">৩. কুকিজ (Cookies) ও বিজ্ঞাপন</h5>
+        <p class="text-secondary">আমাদের ওয়েবসাইটে ইউজার এক্সপেরিয়েন্স উন্নত করতে এবং Google AdSense বা Facebook Pixel-এর মতো সার্ভিস ব্যবহার করার জন্য কুকিজ ট্র্যাকিং ব্যবহৃত হতে পারে।</p>
+
+        <h5 class="fw-bold text-danger mt-4">৪. যোগাযোগ</h5>
+        <p class="text-secondary">গোপনীয়তা নীতি সম্পর্কিত যেকোনো প্রশ্নের জন্য আমাদের সাথে যোগাযোগ করুন: <br>ফোন: {{ site_settings.phone }}</p>
+    </div>
+</div>
+{% endblock %}
