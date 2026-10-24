@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Terms & Conditions - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="col-md-10 mx-auto">
+    <div class="bg-white p-4 p-md-5 rounded-3 shadow-sm border">
+        <h2 class="fw-bold text-dark mb-4 border-bottom pb-2">Terms & Conditions (ব্যবহারের শর্তাবলী)</h2>
+        <p class="text-secondary"><strong>{{ site_settings.site_name }}</strong> ওয়েবসাইট ব্যবহার এবং অর্ডার করার ক্ষেত্রে আপনাকে নিচের শর্তাবলী মেনে চলতে হবে:</p>
+        
+        <h5 class="fw-bold text-danger mt-4">১. অর্ডার ও মূল্য পরিশোধ</h5>
+        <p class="text-secondary">আমরা প্রধানত ক্যাশ অন ডেলিভারি (Cash on Delivery) সুবিধা প্রদান করে থাকি। পণ্য হাতে পাওয়ার সময় সম্পূর্ণ মূল্য পরিশোধ করতে হবে।</p>
+
+        <h5 class="fw-bold text-danger mt-4">২. পণ্যের বিবরণ ও প্রাপ্যতা</h5>
+        <p class="text-secondary">আমরা ওয়েবসাইটে পণ্যের সঠিক তথ্য প্রদান করার সর্বাত্মক চেষ্টা করি। তবে স্টকের প্রাপ্যতা অনুযায়ী অর্ডারের সময়সীমা বা ডেলিভারিতে সামান্য পরিবর্তন হতে পারে।</p>
+
+        <h5 class="fw-bold text-danger mt-4">৩. নীতি পরিবর্তন</h5>
+        <p class="text-secondary">{{ site_settings.site_name }} যেকোনো সময় পূর্ব ঘোষণা ছাড়াই শর্তাবলী পরিবর্তন বা আপডেট করার অধিকার সংরক্ষণ করে।</p>
+    </div>
+</div>
+{% endblock %}
