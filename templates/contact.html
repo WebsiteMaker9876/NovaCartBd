@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="col-md-8 mx-auto">
+    <div class="bg-white p-4 p-md-5 rounded-3 shadow-sm border">
+        <h2 class="fw-bold text-dark mb-4 border-bottom pb-2 text-center">যোগাযোগ করুন (Contact Us)</h2>
+        <div class="row g-4 my-2">
+            <div class="col-md-6 text-center">
+                <div class="p-3 bg-light rounded-3 border">
+                    <i class="fa-solid fa-phone fs-2 text-danger mb-2"></i>
+                    <h6 class="fw-bold mb-1">ফোন নম্বর</h6>
+                    <p class="text-secondary m-0">{{ site_settings.phone }}</p>
+                </div>
+            </div>
+            <div class="col-md-6 text-center">
+                <div class="p-3 bg-light rounded-3 border">
+                    <i class="fa-brands fa-whatsapp fs-2 text-success mb-2"></i>
+                    <h6 class="fw-bold mb-1">হোয়াটসঅ্যাপ সাপোর্ট</h6>
+                    <p class="text-secondary m-0">{{ site_settings.whatsapp }}</p>
+                </div>
+            </div>
+        </div>
+        <p class="text-center text-muted mt-3 mb-0">যেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের কাস্টমার কেয়ারে যোগাযোগ করুন।</p>
+    </div>
+</div>
+{% endblock %}
