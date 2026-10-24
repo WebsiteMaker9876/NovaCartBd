@@ -13,19 +13,23 @@
             
             <div class="d-flex align-items-center justify-content-center gap-3 my-3">
                 <span class="fs-2 fw-black text-danger">৳{{ product.sale_price }}</span>
-                {% if product.regular_price %}
+                {% if product.regular_price and product.regular_price > product.sale_price %}
                 <span class="fs-5 text-muted text-decoration-line-through">৳{{ product.regular_price }}</span>
                 {% endif %}
             </div>
 
-            <a href="#orderForm" class="btn btn-warning btn-lg fw-black px-4 py-3 rounded-pill shadow-sm text-dark animate-bounce w-100 max-w-400">
+            <a href="#orderForm" class="btn btn-warning btn-lg fw-bold px-4 py-3 rounded-pill shadow-sm text-dark w-100 max-w-400">
                 ⚡ এখনই অর্ডার করতে ক্লিক করুন
             </a>
         </div>
 
         <!-- Main Product Image Gallery -->
         <div class="bg-white p-3 rounded-3 shadow-sm border mb-4 text-center">
-            <img id="mainProductImg" src="{{ product.main_image_url }}" class="img-fluid rounded-3 mb-3 shadow-sm" style="max-height: 400px; width: 100%; object-fit: contain;">
+            <img id="mainProductImg" 
+                 src="{{ product.main_image_url if product.main_image_url else 'https://via.placeholder.com/500x500?text=No+Image' }}" 
+                 onerror="this.onerror=null;this.src='https://via.placeholder.com/500x500?text=Product+Image';"
+                 class="img-fluid rounded-3 mb-3 shadow-sm" 
+                 style="max-height: 400px; width: 100%; object-fit: contain;">
             
             {% if gallery_images %}
             <div class="d-flex justify-content-center gap-2 overflow-auto py-2">
@@ -53,12 +57,14 @@
         {% endif %}
 
         <!-- Product Description -->
+        {% if product.description %}
         <div class="bg-white p-4 rounded-3 shadow-sm border mb-4">
             <h5 class="fw-bold border-bottom pb-2 mb-3 text-dark"><i class="fa-solid fa-circle-info text-primary me-2"></i>প্রোডাক্ট বিবরণী</h5>
             <div class="lh-lg text-secondary" style="white-space: pre-line;">
                 {{ product.description }}
             </div>
         </div>
+        {% endif %}
 
         <!-- Order Form Section -->
         <div id="orderForm" class="bg-white p-4 rounded-3 shadow-lg border border-danger border-2 mb-4">
@@ -93,7 +99,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-danger btn-lg w-100 fw-black py-3 rounded-3 fs-5 shadow">
+                <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold py-3 rounded-3 fs-5 shadow">
                     🛒 অর্ডার নিশ্চিত করুন (৳{{ product.sale_price }})
                 </button>
             </form>
