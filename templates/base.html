@@ -11,6 +11,11 @@
     <meta name="google-site-verification" content="{{ site_settings.google_site_verification }}" />
     {% endif %}
 
+    <!-- Google AdSense Script Tag -->
+    {% if site_settings.google_adsense_code %}
+    {{ site_settings.google_adsense_code|safe }}
+    {% endif %}
+
     <meta property="og:site_name" content="{{ site_settings.site_name }}">
     <meta property="og:title" content="{% block og_title %}{{ site_settings.site_name }} - {{ site_settings.tagline }}{% endblock %}">
     <meta property="og:description" content="{% block og_desc %}সারা বাংলাদেশে ক্যাশ অন ডেলিভারিতে অর্ডার করুন আপনার পছন্দের ট্রেন্ডি গ্যাজেট ও লাইফস্টাইল প্রডাক্ট।{% endblock %}">
@@ -109,9 +114,6 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 87, 34, 0.15);
         }
-        .category-card:hover i {
-            transform: scale(1.2);
-        }
 
         .product-card { border: none; border-radius: 12px; background: #ffffff; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
@@ -124,7 +126,8 @@
 
         footer { background-color: var(--dark-color); color: #a0a5b5; padding: 40px 0 20px 0; margin-top: 60px; }
         footer h6 { color: #ffffff; font-weight: 700; }
-        footer a { color: #a0a5b5; text-decoration: none; }
+        footer a { color: #a0a5b5; text-decoration: none; transition: color 0.2s; }
+        footer a:hover { color: #ffffff; }
 
         .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e0e0e0; z-index: 9999; padding: 8px 0; }
         @media (max-width: 768px) {
@@ -171,20 +174,24 @@
     <footer>
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <h5 class="text-white fw-bold mb-2">{{ site_settings.site_name }}</h5>
                     <p class="small text-muted mb-3">{{ site_settings.tagline }} - বাংলাদেশের অন্যতম বিশ্বস্ত অনলাইন শপ।</p>
                 </div>
-                <div class="col-md-3">
-                    <h6 class="mb-3">Quick Links</h6>
+                <div class="col-md-4">
+                    <h6 class="mb-3">Legal & Policies (আইনি ও পলিসি)</h6>
                     <ul class="list-unstyled small">
-                        <li class="mb-1"><a href="/">হোমপেজ</a></li>
-                        <li class="mb-1"><a href="/track">অর্ডার স্ট্যাটাস ট্র্যাকিং</a></li>
+                        <li class="mb-1"><a href="/privacy-policy">Privacy Policy (গোপনীয়তা নীতি)</a></li>
+                        <li class="mb-1"><a href="/terms">Terms & Conditions (ব্যবহারের শর্তাবলী)</a></li>
+                        <li class="mb-1"><a href="/refund-policy">Refund & Return Policy (রিফান্ড নীতি)</a></li>
+                        <li class="mb-1"><a href="/about">About Us (আমাদের সম্পর্কে)</a></li>
+                        <li class="mb-1"><a href="/contact">Contact Us (যোগাযোগ)</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">
                     <h6 class="mb-3">Customer Support</h6>
                     <p class="small mb-1"><i class="fa-solid fa-phone text-warning me-2"></i> {{ site_settings.phone }}</p>
+                    <p class="small mb-1"><i class="fa-solid fa-envelope text-info me-2"></i> support@novacartbdsell.shop</p>
                     <p class="small mb-1">
                         <a href="https://wa.me/{{ site_settings.whatsapp|replace('+', '')|replace(' ', '') }}" target="_blank" class="whatsapp-icon-btn me-2" style="width:28px; height:28px; font-size:16px;">
                             <i class="fa-brands fa-whatsapp"></i>
