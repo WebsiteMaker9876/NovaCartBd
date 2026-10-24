@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}About Us - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="col-md-10 mx-auto">
+    <div class="bg-white p-4 p-md-5 rounded-3 shadow-sm border text-center">
+        <h2 class="fw-bold text-dark mb-3">আমাদের সম্পর্কে (About Us)</h2>
+        <p class="lead text-danger fw-bold mb-4">{{ site_settings.site_name }} - {{ site_settings.tagline }}</p>
+        <p class="text-secondary fs-5" style="line-height: 1.8;">
+            <strong>{{ site_settings.site_name }}</strong> বাংলাদেশের একটি দ্রুত বর্ধনশীল ই-কমার্স প্ল্যাটফর্ম। আমরা আমাদের গ্রাহকদের কাছে সেরা মানের পণ্য, দ্রুততম হোম ডেলিভারি এবং সাশ্রয়ী মূল্য নিশ্চিত করতে সবসময় প্রতিশ্রুতিবদ্ধ। গ্যাজেট, হোম অ্যাপ্লায়েন্স থেকে শুরু করে দৈনন্দিন জীবনের আকর্ষণীয় পণ্যগুলো সরাসরি আপনার দোরগোড়ায় পৌঁছে দেওয়াই আমাদের লক্ষ্য।
+        </p>
+    </div>
+</div>
+{% endblock %}
