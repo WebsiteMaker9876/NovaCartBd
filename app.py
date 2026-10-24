@@ -101,6 +101,7 @@ def init_db():
             'whatsapp': '+8801568022033',
             'fb_pixel_id': '',
             'google_site_verification': '',
+            'google_adsense_code': '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1619234614836027" crossorigin="anonymous"></script>',
             'admin_password': 'admin123#novacart',
             'notice_text': '🚀 ক্যাশ অন ডেলিভারি সারা বাংলাদেশে! ৩ দিনের মধ্যে নিশ্চিত রিটার্ন পলিসি।'
         }
@@ -200,6 +201,29 @@ def product_landing(slug):
         
     return render_template('landing_page.html', product=product, gallery=gallery, features=features, reviews=reviews, settings=settings)
 
+# ==================== Google AdSense Mandatory Pages ====================
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacy_policy.html')
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
+@app.route('/refund-policy')
+def refund_policy():
+    return render_template('refund_policy.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+# =========================================================================
+
 @app.route('/add_review/<int:product_id>', methods=['POST'])
 def add_review(product_id):
     name = request.form.get('customer_name')
@@ -266,6 +290,11 @@ def sitemap():
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     xml += f'  <url><loc>{host}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>\n'
+    xml += f'  <url><loc>{host}/privacy-policy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
+    xml += f'  <url><loc>{host}/terms</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
+    xml += f'  <url><loc>{host}/refund-policy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
+    xml += f'  <url><loc>{host}/about</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
+    xml += f'  <url><loc>{host}/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
     xml += f'  <url><loc>{host}/track</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>\n'
     for p in products:
         xml += f'  <url><loc>{host}/p/{p["slug"]}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n'
@@ -343,7 +372,7 @@ def admin():
                 conn.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                              (code, slug, name, regular_price, sale_price, category, image_url, gallery_images_str, features, description))
                 conn.commit()
-                flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে ছবি আপলোডসহ তৈরি করা হয়েছে!', 'success')
+                flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে তৈরি করা হয়েছে!', 'success')
                 
             elif action == 'add_category':
                 cat_name = request.form.get('cat_name')
@@ -353,12 +382,11 @@ def admin():
                 flash('ক্যাটাগরি যুক্ত করা হয়েছে!', 'success')
                 
             elif action == 'update_settings':
-                fields = ['site_name', 'tagline', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'admin_password', 'notice_text']
+                fields = ['site_name', 'tagline', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'google_adsense_code', 'admin_password', 'notice_text']
                 for field in fields:
                     val = request.form.get(field, '')
                     conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
                 
-                # Handle Logo Upload
                 if 'logo_file' in request.files:
                     file = request.files['logo_file']
                     if file and file.filename != '' and allowed_file(file.filename):
@@ -369,7 +397,6 @@ def admin():
                         logo_url = f"/static/uploads/{filename}"
                         conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('logo_url', logo_url))
 
-                # Handle Banner Upload (File Upload or Fallback URL)
                 banner_url = request.form.get('banner_url_text', '')
                 if 'banner_file' in request.files:
                     file = request.files['banner_file']
@@ -384,7 +411,7 @@ def admin():
                     conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('header_banner_url', banner_url))
 
                 conn.commit()
-                flash('ওয়েবসাইট সেটিংস ও ব্যানার সফলভাবে সেভ করা হয়েছে!', 'success')
+                flash('ওয়েবসাইট সেটিংস ও ব্যানার সফলভাবে সেভ করা হয়েছে!', 'success')
                 
         return redirect(url_for('admin'))
         
