@@ -439,5 +439,11 @@ def update_order_status(order_id, status):
     flash('অর্ডার স্ট্যাটাস আপডেট করা হয়েছে!', 'success')
     return redirect(url_for('admin'))
 
+@app.route('/ads.txt')
+def ads_txt():
+    # এখানে ca-pub-1619234614836027 আপনার অ্যাডসেন্স পাবলিশার আইডি
+    txt = "google.com, pub-1619234614836027, DIRECT, f08c47fec0942fa0"
+    return Response(txt, mimetype='text/plain')
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
