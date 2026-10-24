@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Refund & Return Policy - {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="col-md-10 mx-auto">
+    <div class="bg-white p-4 p-md-5 rounded-3 shadow-sm border">
+        <h2 class="fw-bold text-dark mb-4 border-bottom pb-2">Refund & Return Policy (ফেরত ও রিফান্ড নীতি)</h2>
+        <p class="text-secondary">গ্রাহক সন্তুষ্টিই <strong>{{ site_settings.site_name }}</strong>-এর মূল লক্ষ্য। আপনার কেনা পণ্যে কোনো সমস্যা থাকলে খুব সহজেই রিটার্ন করতে পারবেন।</p>
+        
+        <h5 class="fw-bold text-danger mt-4">১. রিটার্নের শর্তাবলী</h5>
+        <ul class="text-secondary">
+            <li>ডেলিভারিম্যানের সামনে পণ্য চেক করে গ্রহণ করুন।</li>
+            <li>পণ্য ক্ষতিগ্রস্ত, ভাঙা বা ভুল হলে তৎক্ষণাৎ ডেলিভারিম্যানকে ফেরত দিন।</li>
+            <li>পণ্য ডেলিভারি পাওয়ার সর্বোচ্চ ৩ দিনের মধ্যে আমাদের কাস্টমার সাপোর্টে অবহিত করতে হবে।</li>
+        </ul>
+
+        <h5 class="fw-bold text-danger mt-4">২. রিফান্ড প্রক্রিয়া</h5>
+        <p class="text-secondary">রিটার্নকৃত পণ্য সফলভাবে যাচাই করার পর ৩-৫ কার্যদিবসের মধ্যে বিকাশ/রকেট/ব্যাংক ট্রান্সফারের মাধ্যমে রিফান্ড সম্পন্ন করা হয়।</p>
+    </div>
+</div>
+{% endblock %}
