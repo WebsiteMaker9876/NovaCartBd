@@ -4,18 +4,32 @@
 
 {% block content %}
 
-<!-- Main Banner Section -->
+<!-- Hero Banner Section -->
 {% if site_settings.header_banner_url %}
 <div class="hero-banner-section mb-4">
     <a href="{{ site_settings.banner_link }}" class="d-block text-decoration-none">
-        <div class="card border-0 rounded-4 overflow-hidden shadow-sm" style="background: #111;">
-            <img src="{{ site_settings.header_banner_url }}" alt="Hero Banner" class="w-100 img-fluid hero-img" style="max-height: 380px; object-fit: cover; transition: opacity 0.3s ease;">
+        <div class="card border-0 rounded-4 overflow-hidden shadow-sm position-relative">
+            <img src="{{ site_settings.header_banner_url }}" alt="Hero Banner" class="w-100 img-fluid hero-img" style="max-height: 380px; object-fit: cover;">
         </div>
     </a>
 </div>
 {% endif %}
 
-<!-- Trust / Feature Badges -->
+<!-- Flash Sale Offer Bar with Live Timer -->
+<div class="bg-gradient-danger text-white p-3 rounded-4 shadow-sm mb-4 d-flex flex-wrap align-items-center justify-content-between gap-2" style="background: linear-gradient(135deg, #ff5722, #d32f2f);">
+    <div class="d-flex align-items-center gap-2">
+        <i class="fa-solid fa-bolt-lightning fs-4 text-warning animate-pulse"></i>
+        <div>
+            <h6 class="fw-bold m-0 fs-6">সীমিত সময়ের ধামাকা অফার!</h6>
+            <small class="opacity-75">আজকের সব অর্ডারে নিশ্চিত ছাড় ও দ্রুত ডেলিভারি</small>
+        </div>
+    </div>
+    <div class="d-flex align-items-center gap-2 fw-bold bg-black bg-opacity-25 px-3 py-1 rounded-pill" style="font-size: 13px;">
+        <i class="fa-regular fa-clock"></i> অফার শেষ হতে বাকি: <span id="offerTimer" class="text-warning">05:42:19</span>
+    </div>
+</div>
+
+<!-- Trust & Support Badges -->
 <div class="row g-2 mb-4 text-center">
     <div class="col-4">
         <div class="p-3 bg-white rounded-3 shadow-xs border-0 d-flex flex-column align-items-center justify-content-center h-100">
@@ -37,7 +51,7 @@
     </div>
 </div>
 
-<!-- Category Section -->
+<!-- Category Filter Section -->
 <div class="bg-white p-3 p-md-4 rounded-4 shadow-xs mb-4 border-0">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h6 class="fw-bold m-0 text-dark fs-6 d-flex align-items-center">
@@ -76,23 +90,23 @@
     <div class="col">
         <div class="card h-100 border-0 shadow-xs rounded-4 overflow-hidden position-relative bg-white product-clean-card">
             
-            <!-- Discount Badge -->
             {% if discount > 0 %}
             <span class="badge position-absolute top-0 start-0 m-2 px-2 py-1 rounded-2 fw-bold text-white shadow-xs" style="background-color: #ff3b30; font-size: 10px; z-index: 2;">
                 {{ discount }}% OFF
             </span>
             {% endif %}
 
-            <!-- Product Image -->
             <a href="/p/{{ p.slug }}" class="text-decoration-none bg-light d-block position-relative text-center overflow-hidden" style="height: 180px;">
                 <img src="{{ p.image }}" class="w-100 h-100 clean-prod-img" style="object-fit: contain; padding: 8px; transition: transform 0.3s ease;" alt="{{ p.name }}">
             </a>
 
-            <!-- Card Body -->
             <div class="card-body p-3 d-flex flex-column justify-content-between">
                 <div>
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="text-muted" style="font-size: 10px; font-weight: 500;">CODE: {{ p.code }}</span>
+                        <div class="text-warning" style="font-size: 10px;">
+                            <i class="fa-solid fa-star"></i> 4.9
+                        </div>
                     </div>
                     <h6 class="fw-bold text-dark mb-2 prod-title">
                         <a href="/p/{{ p.slug }}" class="text-dark text-decoration-none">{{ p.name }}</a>
@@ -124,10 +138,56 @@
 </div>
 {% endif %}
 
-<!-- Minimal Styling CSS -->
+<!-- Customer Trust Testimonial Banner -->
+<div class="bg-white p-4 rounded-4 shadow-xs border-0 mb-5">
+    <h6 class="fw-bold text-center text-dark mb-3"><i class="fa-solid fa-heart text-danger me-1"></i> আমাদের সম্মানীত গ্রাহকদের মতামত</h6>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border-0">
+                <div class="text-warning mb-1" style="font-size: 12px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="small text-secondary mb-1">"প্রোডাক্ট কোয়ালিটি অনেক ভালো পেয়েছি। ছবি যেমন দেখেছি সেম জিনিস পেয়েছি।"</p>
+                <small class="fw-bold text-dark d-block">- মোঃ আরিফ হোসেন (ঢাকা)</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border-0">
+                <div class="text-warning mb-1" style="font-size: 12px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="small text-secondary mb-1">"মাত্র ২ দিনের মধ্যে ডেলিভারি পেয়েছি। পণ্য হাতে পেয়ে চেক করে টাকা দিয়েছি, খুবই নিরাপদ।"</p>
+                <small class="fw-bold text-dark d-block">- তানজিনা আক্তার (চট্টগ্রাম)</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Live Timer Script -->
+<script>
+    function startTimer(duration, display) {
+        var timer = duration, hours, minutes, seconds;
+        setInterval(function () {
+            hours = parseInt(timer / 3600, 10);
+            minutes = parseInt((timer % 3600) / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = hours + ":" + minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = duration;
+            }
+        }, 1000);
+    }
+    window.onload = function () {
+        var fiveHours = 60 * 60 * 5 + 60 * 42 + 19,
+            display = document.querySelector('#offerTimer');
+        if(display) startTimer(fiveHours, display);
+    };
+</script>
+
 <style>
     .shadow-xs { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    
     .prod-title {
         font-size: 13px;
         line-height: 1.4;
@@ -137,7 +197,6 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
     }
-
     .product-clean-card {
         transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
@@ -148,7 +207,6 @@
     .product-clean-card:hover .clean-prod-img {
         transform: scale(1.05);
     }
-
     .btn-order-clean {
         background-color: #ff5722;
         border: none;
@@ -157,16 +215,6 @@
     }
     .btn-order-clean:hover {
         background-color: #e64a19;
-    }
-
-    .btn-soft-danger {
-        background-color: #ffebee;
-        color: #d32f2f;
-        border: none;
-    }
-    .btn-soft-danger:hover {
-        background-color: #ffcdd2;
-        color: #b71c1c;
     }
 </style>
 
