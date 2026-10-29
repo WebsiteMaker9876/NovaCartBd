@@ -4,6 +4,10 @@ import re
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash, Response
 from werkzeug.utils import secure_filename
+import psycopg2
+import psycopg2.extras
+import cloudinary
+import cloudinary.uploader
 
 app = Flask(__name__)
 app.secret_key = 'novacart_pro_ultimate_secret_key_2026'
@@ -13,15 +17,27 @@ DATABASE = os.path.join(basedir, 'novacart_pro.db')
 UPLOAD_FOLDER = os.path.join(basedir, 'static/uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+)
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        conn = psycopg2.connect(database_url, cursor_factory=psycopg2.extras.RealDictCursor)
+        return conn
+    else:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        return conn
 
 def generate_slug(text):
     text = text.lower().strip()
@@ -30,67 +46,120 @@ def generate_slug(text):
     return text.strip('-')
 
 def init_db():
+    database_url = os.environ.get('DATABASE_URL')
     with get_db() as conn:
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS settings (
-                key TEXT PRIMARY KEY,
-                value TEXT
-            )
-        ''')
-        
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS categories (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                icon TEXT DEFAULT 'fa-tags'
-            )
-        ''')
-        
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                code TEXT,
-                slug TEXT UNIQUE,
-                name TEXT NOT NULL,
-                regular_price REAL NOT NULL,
-                sale_price REAL NOT NULL,
-                category TEXT NOT NULL,
-                image TEXT,
-                gallery_images TEXT,
-                features TEXT,
-                description TEXT,
-                is_new INTEGER DEFAULT 0,
-                is_top INTEGER DEFAULT 0
-            )
-        ''')
-        
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS reviews (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER,
-                customer_name TEXT NOT NULL,
-                rating INTEGER DEFAULT 5,
-                comment TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                customer_name TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                address TEXT NOT NULL,
-                delivery_area TEXT NOT NULL,
-                delivery_charge REAL NOT NULL,
-                items_summary TEXT NOT NULL,
-                total_price REAL NOT NULL,
-                status TEXT DEFAULT 'Pending',
-                order_date DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        
         cursor = conn.cursor()
+        if database_url:
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS settings (
+                    key TEXT PRIMARY KEY,
+                    value TEXT
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS categories (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    icon TEXT DEFAULT 'fa-tags'
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS products (
+                    id SERIAL PRIMARY KEY,
+                    code TEXT,
+                    slug TEXT UNIQUE,
+                    name TEXT NOT NULL,
+                    regular_price REAL NOT NULL,
+                    sale_price REAL NOT NULL,
+                    category TEXT NOT NULL,
+                    image TEXT,
+                    gallery_images TEXT,
+                    features TEXT,
+                    description TEXT,
+                    is_new INTEGER DEFAULT 0,
+                    is_top INTEGER DEFAULT 0
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id SERIAL PRIMARY KEY,
+                    product_id INTEGER,
+                    customer_name TEXT NOT NULL,
+                    rating INTEGER DEFAULT 5,
+                    comment TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS orders (
+                    id SERIAL PRIMARY KEY,
+                    customer_name TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    delivery_area TEXT NOT NULL,
+                    delivery_charge REAL NOT NULL,
+                    items_summary TEXT NOT NULL,
+                    total_price REAL NOT NULL,
+                    status TEXT DEFAULT 'Pending',
+                    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+        else:
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS settings (
+                    key TEXT PRIMARY KEY,
+                    value TEXT
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS categories (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    icon TEXT DEFAULT 'fa-tags'
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS products (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    code TEXT,
+                    slug TEXT UNIQUE,
+                    name TEXT NOT NULL,
+                    regular_price REAL NOT NULL,
+                    sale_price REAL NOT NULL,
+                    category TEXT NOT NULL,
+                    image TEXT,
+                    gallery_images TEXT,
+                    features TEXT,
+                    description TEXT,
+                    is_new INTEGER DEFAULT 0,
+                    is_top INTEGER DEFAULT 0
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    product_id INTEGER,
+                    customer_name TEXT NOT NULL,
+                    rating INTEGER DEFAULT 5,
+                    comment TEXT NOT NULL,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    customer_name TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    delivery_area TEXT NOT NULL,
+                    delivery_charge REAL NOT NULL,
+                    items_summary TEXT NOT NULL,
+                    total_price REAL NOT NULL,
+                    status TEXT DEFAULT 'Pending',
+                    order_date DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
         default_settings = {
             'site_name': 'NovaCart BD',
             'tagline': 'Shop Smart, Live Better',
@@ -107,10 +176,15 @@ def init_db():
         }
         
         for key, val in default_settings.items():
-            cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)", (key, val))
+            if database_url:
+                cursor.execute("INSERT INTO settings (key, value) VALUES (%s, %s) ON CONFLICT (key) DO NOTHING", (key, val))
+            else:
+                cursor.execute("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)", (key, val))
             
         cursor.execute("SELECT COUNT(*) FROM products")
-        if cursor.fetchone()[0] == 0:
+        row = cursor.fetchone()
+        count = row['count'] if isinstance(row, dict) else row[0]
+        if count == 0:
             sample_products = [
                 ("NC-3622", "electric-duck-climbing-stairs-toy", "Electric Small Duck Climbing Stairs Toy", 1290.0, 850.0, "Toys", 
                  "https://images.unsplash.com/photo-1531651008558-ed1740375b39?w=800", 
@@ -124,13 +198,11 @@ def init_db():
                  "১৬টি ভিন্ন ধরনের কাটিং ও চপিং ব্লেড|স্টেইনলেস স্টিল মরিচারোধী ব্লেড|সহজে পরিষ্কারযোগ্য ও ডিশওয়াশার সেফ|রান্নার সময় বাঁচায় ৭০%",
                  "Professional Kitchen Food Cutter with Stainless Steel Blades. আপনার রান্নাঘরের নিত্যদিনের কাজকে করুন সহজ ও দ্রুত।", 1, 1)
             ]
-            cursor.executemany("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
             
             sample_reviews = [
                 (1, "মোঃ আরমান হোসেন", 5, "পণ্যটি সত্যিই অনেক সুন্দর এবং বাচ্চার খুব পছন্দ হয়েছে। ধন্যবাদ ডেলিভারি ম্যান ভাইয়াকে।"),
                 (2, "তানজিনা আক্তার", 5, "রান্নার সময় অনেক বেঁচে যায়! ব্লেডগুলো খুব ধারালো ও শক্তপোক্ত।")
             ]
-            cursor.executemany("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)", sample_reviews)
 
             categories = [
                 ("Toys", "fa-robot"),
@@ -142,15 +214,29 @@ def init_db():
                 ("Watches", "fa-clock"),
                 ("Gadgets & Electronics", "fa-laptop")
             ]
-            cursor.executemany("INSERT INTO categories (name, icon) VALUES (?, ?)", categories)
+
+            if database_url:
+                for cat in categories:
+                    cursor.execute("INSERT INTO categories (name, icon) VALUES (%s, %s)", cat)
+                for prod in sample_products:
+                    cursor.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", prod)
+                for rev in sample_reviews:
+                    cursor.execute("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (%s, %s, %s, %s)", rev)
+            else:
+                cursor.executemany("INSERT INTO categories (name, icon) VALUES (?, ?)", categories)
+                cursor.executemany("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description, is_new, is_top) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sample_products)
+                cursor.executemany("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)", sample_reviews)
             
         conn.commit()
 
 init_db()
 
 def get_settings():
+    database_url = os.environ.get('DATABASE_URL')
     with get_db() as conn:
-        rows = conn.execute("SELECT key, value FROM settings").fetchall()
+        cursor = conn.cursor()
+        cursor.execute("SELECT key, value FROM settings")
+        rows = cursor.fetchall()
         return {row['key']: row['value'] for row in rows}
 
 def login_required(f):
@@ -169,23 +255,36 @@ def inject_global_vars():
 def index():
     cat = request.args.get('category')
     settings = get_settings()
+    database_url = os.environ.get('DATABASE_URL')
     with get_db() as conn:
-        categories = conn.execute("SELECT * FROM categories").fetchall()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM categories")
+        categories = cursor.fetchall()
         if cat:
-            products = conn.execute("SELECT * FROM products WHERE category = ? ORDER BY id DESC", (cat,)).fetchall()
+            if database_url:
+                cursor.execute("SELECT * FROM products WHERE category = %s ORDER BY id DESC", (cat,))
+            else:
+                cursor.execute("SELECT * FROM products WHERE category = ? ORDER BY id DESC", (cat,))
+            products = cursor.fetchall()
         else:
-            products = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
+            cursor.execute("SELECT * FROM products ORDER BY id DESC")
+            products = cursor.fetchall()
                 
     return render_template('index.html', products=products, categories=categories, current_cat=cat, settings=settings)
 
 @app.route('/p/<slug>')
 def product_landing(slug):
     settings = get_settings()
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     with get_db() as conn:
-        product = conn.execute("SELECT * FROM products WHERE slug = ?", (slug,)).fetchone()
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM products WHERE slug = {ph}", (slug,))
+        product = cursor.fetchone()
         if not product:
             if slug.isdigit():
-                product = conn.execute("SELECT * FROM products WHERE id = ?", (int(slug),)).fetchone()
+                cursor.execute(f"SELECT * FROM products WHERE id = {ph}", (int(slug),))
+                product = cursor.fetchone()
             if not product:
                 return redirect(url_for('index'))
         
@@ -197,11 +296,11 @@ def product_landing(slug):
         if product['features']:
             features = [f.strip() for f in product['features'].split('|') if f.strip()]
             
-        reviews = conn.execute("SELECT * FROM reviews WHERE product_id = ? ORDER BY id DESC", (product['id'],)).fetchall()
+        cursor.execute(f"SELECT * FROM reviews WHERE product_id = {ph} ORDER BY id DESC", (product['id'],))
+        reviews = cursor.fetchall()
         
     return render_template('landing_page.html', product=product, gallery=gallery, features=features, reviews=reviews, settings=settings)
 
-# ==================== Google AdSense Mandatory Pages ====================
 @app.route('/privacy-policy')
 def privacy_policy():
     return render_template('privacy_policy.html')
@@ -222,17 +321,18 @@ def about():
 def contact():
     return render_template('contact.html')
 
-# =========================================================================
-
 @app.route('/add_review/<int:product_id>', methods=['POST'])
 def add_review(product_id):
     name = request.form.get('customer_name')
     rating = int(request.form.get('rating', 5))
     comment = request.form.get('comment')
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     
     with get_db() as conn:
-        product = conn.execute("SELECT slug FROM products WHERE id = ?", (product_id,)).fetchone()
-        conn.execute("INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES (?, ?, ?, ?)",
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT slug FROM products WHERE id = {ph}", (product_id,))
+        cursor.execute(f"INSERT INTO reviews (product_id, customer_name, rating, comment) VALUES ({ph}, {ph}, {ph}, {ph})",
                      (product_id, name, rating, comment))
         conn.commit()
         
@@ -252,21 +352,33 @@ def quick_order(product_id):
     delivery_charge = charge_map.get(area, 60.0)
     area_display = charge_name_map.get(area, 'ঢাকা সিটি (৬০ টাকা)')
     
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
+    
     with get_db() as conn:
-        product = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM products WHERE id = {ph}", (product_id,))
+        product = cursor.fetchone()
         if not product:
             return redirect(url_for('index'))
             
         total = product['sale_price'] + delivery_charge
         items_summary = f"{product['name']} (কোড: {product['code']})"
         
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO orders (customer_name, phone, address, delivery_area, delivery_charge, items_summary, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (name, phone, address, area_display, delivery_charge, items_summary, total)
-        )
+        if database_url:
+            cursor.execute(
+                "INSERT INTO orders (customer_name, phone, address, delivery_area, delivery_charge, items_summary, total_price) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                (name, phone, address, area_display, delivery_charge, items_summary, total)
+            )
+            row = cursor.fetchone()
+            order_id = row['id'] if isinstance(row, dict) else row[0]
+        else:
+            cursor.execute(
+                "INSERT INTO orders (customer_name, phone, address, delivery_area, delivery_charge, items_summary, total_price) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (name, phone, address, area_display, delivery_charge, items_summary, total)
+            )
+            order_id = cursor.lastrowid
         conn.commit()
-        order_id = cursor.lastrowid
         
     return render_template('order_success.html', order_id=order_id, name=name, phone=phone, address=address, product=product, total=total, charge=delivery_charge)
 
@@ -274,18 +386,27 @@ def quick_order(product_id):
 def track_order():
     order = None
     searched = False
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     if request.method == 'POST':
         searched = True
         query = request.form.get('query')
         with get_db() as conn:
-            order = conn.execute("SELECT * FROM orders WHERE id = ? OR phone = ?", (query, query)).fetchone()
+            cursor = conn.cursor()
+            if query.isdigit():
+                cursor.execute(f"SELECT * FROM orders WHERE id = {ph} OR phone = {ph}", (int(query), query))
+            else:
+                cursor.execute(f"SELECT * FROM orders WHERE phone = {ph}", (query,))
+            order = cursor.fetchone()
     return render_template('track.html', order=order, searched=searched)
 
 @app.route('/sitemap.xml')
 def sitemap():
     host = request.host_url.rstrip('/')
     with get_db() as conn:
-        products = conn.execute("SELECT slug FROM products").fetchall()
+        cursor = conn.cursor()
+        cursor.execute("SELECT slug FROM products")
+        products = cursor.fetchall()
     
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -327,9 +448,12 @@ def admin_logout():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     if request.method == 'POST':
         action = request.form.get('action')
         with get_db() as conn:
+            cursor = conn.cursor()
             if action == 'add_product':
                 code = request.form.get('code')
                 name = request.form.get('name')
@@ -344,22 +468,16 @@ def admin():
                 if 'image_file' in request.files:
                     file = request.files['image_file']
                     if file and file.filename != '' and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        filename = f"main_{int(os.urandom(4).hex(), 16)}_{filename}"
-                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        image_url = f"/static/uploads/{filename}"
+                        upload_result = cloudinary.uploader.upload(file)
+                        image_url = upload_result.get('secure_url')
 
                 gallery_list = []
                 if 'gallery_files' in request.files:
                     files = request.files.getlist('gallery_files')
                     for file in files:
                         if file and file.filename != '' and allowed_file(file.filename):
-                            filename = secure_filename(file.filename)
-                            filename = f"gallery_{int(os.urandom(4).hex(), 16)}_{filename}"
-                            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                            gallery_list.append(f"/static/uploads/{filename}")
+                            upload_result = cloudinary.uploader.upload(file)
+                            gallery_list.append(upload_result.get('secure_url'))
                 
                 extra_gallery = request.form.get('gallery_images_text', '')
                 if extra_gallery:
@@ -369,7 +487,7 @@ def admin():
                             
                 gallery_images_str = ','.join(gallery_list)
 
-                conn.execute("INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                cursor.execute(f"INSERT INTO products (code, slug, name, regular_price, sale_price, category, image, gallery_images, features, description) VALUES ({ph}, {ph}, {ph}, {ph}, {ph}, {ph}, {ph}, {ph}, {ph}, {ph})",
                              (code, slug, name, regular_price, sale_price, category, image_url, gallery_images_str, features, description))
                 conn.commit()
                 flash('প্রডাক্ট ও ল্যান্ডিং পেজ সফলভাবে তৈরি করা হয়েছে!', 'success')
@@ -377,7 +495,7 @@ def admin():
             elif action == 'add_category':
                 cat_name = request.form.get('cat_name')
                 icon = request.form.get('icon', 'fa-tags')
-                conn.execute("INSERT INTO categories (name, icon) VALUES (?, ?)", (cat_name, icon))
+                cursor.execute(f"INSERT INTO categories (name, icon) VALUES ({ph}, {ph})", (cat_name, icon))
                 conn.commit()
                 flash('ক্যাটাগরি যুক্ত করা হয়েছে!', 'success')
                 
@@ -385,30 +503,33 @@ def admin():
                 fields = ['site_name', 'tagline', 'banner_link', 'phone', 'whatsapp', 'fb_pixel_id', 'google_site_verification', 'google_adsense_code', 'admin_password', 'notice_text']
                 for field in fields:
                     val = request.form.get(field, '')
-                    conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
+                    if database_url:
+                        cursor.execute("INSERT INTO settings (key, value) VALUES (%s, %s) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", (field, val))
+                    else:
+                        cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (field, val))
                 
                 if 'logo_file' in request.files:
                     file = request.files['logo_file']
                     if file and file.filename != '' and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        filename = f"logo_{int(os.urandom(4).hex(), 16)}_{filename}"
-                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        logo_url = f"/static/uploads/{filename}"
-                        conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('logo_url', logo_url))
+                        upload_result = cloudinary.uploader.upload(file)
+                        logo_url = upload_result.get('secure_url')
+                        if database_url:
+                            cursor.execute("INSERT INTO settings (key, value) VALUES (%s, %s) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", ('logo_url', logo_url))
+                        else:
+                            cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('logo_url', logo_url))
 
                 banner_url = request.form.get('banner_url_text', '')
                 if 'banner_file' in request.files:
                     file = request.files['banner_file']
                     if file and file.filename != '' and allowed_file(file.filename):
-                        filename = secure_filename(file.filename)
-                        filename = f"banner_{int(os.urandom(4).hex(), 16)}_{filename}"
-                        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        banner_url = f"/static/uploads/{filename}"
+                        upload_result = cloudinary.uploader.upload(file)
+                        banner_url = upload_result.get('secure_url')
                 
                 if banner_url:
-                    conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('header_banner_url', banner_url))
+                    if database_url:
+                        cursor.execute("INSERT INTO settings (key, value) VALUES (%s, %s) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", ('header_banner_url', banner_url))
+                    else:
+                        cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", ('header_banner_url', banner_url))
 
                 conn.commit()
                 flash('ওয়েবসাইট সেটিংস ও ব্যানার সফলভাবে সেভ করা হয়েছে!', 'success')
@@ -416,16 +537,23 @@ def admin():
         return redirect(url_for('admin'))
         
     with get_db() as conn:
-        products = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
-        orders = conn.execute("SELECT * FROM orders ORDER BY id DESC").fetchall()
-        categories = conn.execute("SELECT * FROM categories").fetchall()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM products ORDER BY id DESC")
+        products = cursor.fetchall()
+        cursor.execute("SELECT * FROM orders ORDER BY id DESC")
+        orders = cursor.fetchall()
+        cursor.execute("SELECT * FROM categories ORDER BY id DESC")
+        categories = cursor.fetchall()
     return render_template('admin.html', products=products, orders=orders, categories=categories, settings=get_settings())
 
 @app.route('/admin/delete_product/<int:product_id>')
 @login_required
 def delete_product(product_id):
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     with get_db() as conn:
-        conn.execute("DELETE FROM products WHERE id = ?", (product_id,))
+        cursor = conn.cursor()
+        cursor.execute(f"DELETE FROM products WHERE id = {ph}", (product_id,))
         conn.commit()
     flash('প্রডাক্ট মুছে ফেলা হয়েছে!', 'info')
     return redirect(url_for('admin'))
@@ -433,17 +561,14 @@ def delete_product(product_id):
 @app.route('/admin/update_order/<int:order_id>/<string:status>')
 @login_required
 def update_order_status(order_id, status):
+    database_url = os.environ.get('DATABASE_URL')
+    ph = '%s' if database_url else '?'
     with get_db() as conn:
-        conn.execute("UPDATE orders SET status = ? WHERE id = ?", (status, order_id))
+        cursor = conn.cursor()
+        cursor.execute(f"UPDATE orders SET status = {ph} WHERE id = {ph}", (status, order_id))
         conn.commit()
     flash('অর্ডার স্ট্যাটাস আপডেট করা হয়েছে!', 'success')
     return redirect(url_for('admin'))
-
-@app.route('/ads.txt')
-def ads_txt():
-    # এখানে ca-pub-1619234614836027 আপনার অ্যাডসেন্স পাবলিশার আইডি
-    txt = "google.com, pub-1619234614836027, DIRECT, f08c47fec0942fa0"
-    return Response(txt, mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
