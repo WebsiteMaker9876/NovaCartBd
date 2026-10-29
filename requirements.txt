@@ -3,3 +3,5 @@ gunicorn
 werkzeug
 psycopg2-binary
 cloudinary
+
+
