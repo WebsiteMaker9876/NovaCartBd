@@ -60,7 +60,7 @@
                 <div class="mb-3 bg-light p-3 rounded border">
                     <label class="form-label font-weight-bold text-dark">📢 গুগল এডসেন্স (Google AdSense) স্ক্রিপ্ট কোড</label>
                     <textarea name="google_adsense_code" class="form-control font-monospace" rows="3" placeholder="<script async src='https://pagead2.googlesyndication.com/...'>...</script>">{{ site_settings.google_adsense_code if site_settings else '' }}</textarea>
-                    <small class="text-muted">আপনার গুগল এডসেন্স থেকে পাওয়া ফুল `<script>` ট্যাগটি এখানে পেস্ট করুন। এটি স্বয়ংক্রিয়ভাবে সাইটের হেডারে যুক্ত হয়ে যাবে।</small>
+                    <small class="text-muted">আপনার গুগল এডসেন্স থেকে পাওয়া ফুল `<script>` ট্যাগটি এখানে পেস্ট করুন।</small>
                 </div>
 
                 <div class="row">
@@ -101,7 +101,7 @@
         </div>
         <div class="card-body">
             <form action="{{ url_for('add_category') }}" method="POST" class="input-group mb-3">
-                <input type="text" name="name" class="form-control" placeholder="নতুন ক্যাটাগরির নাম লিখুন" required>
+                <input type="text" name="name" class="form-control" placeholder="নতুন ক্যাটারির নাম লিখুন" required>
                 <button class="btn btn-outline-primary font-weight-bold" type="submit">ক্যাটাগরি যোগ করুন</button>
             </form>
 
@@ -109,7 +109,7 @@
                 {% for cat in categories %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         {{ cat.name }}
-                        <form action="{{ url_for('delete_category', id=cat.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('এই ক্যাটাগরির ভেতরের প্রোডাক্টগুলোও ডিলিট হয়ে যাবে। নিশ্চিত তো?');">
+                        <form action="{{ url_for('delete_category', id=cat.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('নিশ্চিত ডিলিট করতে চান?');">
                             <button type="submit" class="btn btn-danger btn-sm">রিমুভ</button>
                         </form>
                     </li>
@@ -136,7 +136,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label font-weight-bold text-success">ডিসকাউন্ট/অফার মূল্য (৳)</label>
-                        <input type="number" step="0.01" name="discount_price" class="form-control" placeholder="ছাড়ের পর দাম (ঐচ্ছিক)">
+                        <input type="number" step="0.01" name="discount_price" class="form-control" placeholder="ছাড়ের দাম (ঐচ্ছিক)">
                     </div>
                 </div>
 
@@ -160,7 +160,7 @@
                     <textarea name="description" class="form-control" rows="2" placeholder="প্রোডাক্ট সম্পর্কে লিখুন..."></textarea>
                 </div>
 
-                <!-- ফ্রি ডেলিভারি অপشن -->
+                <!-- ফ্রি ডেলিভারি অপশন -->
                 <div class="form-check mb-3 bg-warning p-2 rounded text-dark">
                     <input class="form-check-input ml-1" type="checkbox" name="is_free_delivery" id="freeDeliveryCheck">
                     <label class="form-check-label font-weight-bold ml-4" for="freeDeliveryCheck">
