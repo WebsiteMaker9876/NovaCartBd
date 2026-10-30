@@ -1,6 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
@@ -54,9 +55,34 @@ class Settings(db.Model):
     notice_text = db.Column(db.String(300))
     admin_password = db.Column(db.String(100), default='admin123')
 
-# অ্যাপ স্টার্ট হওয়ার সাথে সাথে ডাটাবেজ টেবিল তৈরি নিশ্চিত করা
+# ====================
+# অটো-টেবিল এবং কলাম আপডেট সিস্টেম (Auto-Migration)
+# ====================
 with app.app_context():
     db.create_all()
+    
+    # সেফটি চেক: যদি কোনো নতুন কলাম কোডে যোগ করা হয় কিন্তু ডাটাবেজে না থাকে, তবে তা অটোমেটিক যোগ করে নেবে
+    inspector = inspect(db.engine)
+    
+    # Product টেবিলে description কলাম না থাকলে অটো যোগ করবে
+    if 'product' in inspector.get_table_names():
+        columns = [c['name'] for c in inspector.get_columns('product')]
+        if 'description' not in columns:
+            with db.engine.begin() as conn:
+                conn.execute(text('ALTER TABLE product ADD COLUMN description TEXT;'))
+
+    # Settings টেবিলে এসইও কলামগুলো না থাকলে অটো যোগ করবে
+    if 'settings' in inspector.get_table_names():
+        set_columns = [c['name'] for c in inspector.get_columns('settings')]
+        with db.engine.begin() as conn:
+            if 'site_name' not in set_columns:
+                conn.execute(text("ALTER TABLE settings ADD COLUMN site_name VARCHAR(100) DEFAULT 'NovaCart BD';"))
+            if 'site_title' not in set_columns:
+                conn.execute(text("ALTER TABLE settings ADD COLUMN site_title VARCHAR(200);"))
+            if 'meta_description' not in set_columns:
+                conn.execute(text("ALTER TABLE settings ADD COLUMN meta_description TEXT;"))
+            if 'meta_keywords' not in set_columns:
+                conn.execute(text("ALTER TABLE settings ADD COLUMN meta_keywords VARCHAR(300);"))
 
 # ====================
 # রুট ও রাউটিং (Routes)
@@ -153,6 +179,11 @@ def delete_category(id):
     return redirect(url_for('admin_dashboard'))
 
 # --- অর্ডার ম্যানেজমেন্ট ও স্ট্যাটাস আপডেট ---
+@app.route('/admin/order/status/<int:id>', methods=['POST'])
+{
+    # handled below properly
+}
+# (Ensuring correct syntax for route)
 @app.route('/admin/order/status/<int:id>', methods=['POST'])
 def update_order_status(id):
     order = Order.query.get_or_404(id)
