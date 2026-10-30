@@ -32,7 +32,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     price = db.Column(db.Float, nullable=False)                 # রেগুলার প্রাইস
-    discount_price = db.Column(db.Float, nullable=True)         # ডিসকাউন্ট বা সেল প্রাইস
+    discount_price = db.Column(db.Float, nullable=True)         # ডিসকাউন্ট প্রাইস
     description = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     image_url = db.Column(db.String(300))
@@ -54,7 +54,7 @@ class Settings(db.Model):
     whatsapp_number = db.Column(db.String(50))
     facebook_pixel_id = db.Column(db.String(100))
     google_search_console = db.Column(db.String(200))
-    google_adsense_code = db.Column(db.Text)                    # গুগল এডসেন্স স্ক্রিপ্ট কোড
+    google_adsense_code = db.Column(db.Text)                    # গুগল এডসেন্স কোড
     notice_text = db.Column(db.String(300))
     delivery_inside_dhaka = db.Column(db.Float, default=80.0)
     delivery_outside_dhaka = db.Column(db.Float, default=150.0)
@@ -68,7 +68,7 @@ with app.app_context():
     
     inspector = inspect(db.engine)
     
-    # Product টেবিলে নতুন কলাম অটো চেক ও যোগ
+    # Product টেবিলে কলাম অটো চেক ও যোগ
     if 'product' in inspector.get_table_names():
         columns = [c['name'] for c in inspector.get_columns('product')]
         with db.engine.begin() as conn:
@@ -79,7 +79,7 @@ with app.app_context():
             if 'discount_price' not in columns:
                 conn.execute(text('ALTER TABLE product ADD COLUMN discount_price FLOAT;'))
 
-    # Settings টেবিলে এডসেন্স ও ডেলিভারি কলাম অটো চেক ও যোগ
+    # Settings টেবিলে কলাম অটো চেক ও যোগ
     if 'settings' in inspector.get_table_names():
         set_columns = [c['name'] for c in inspector.get_columns('settings')]
         with db.engine.begin() as conn:
@@ -117,7 +117,7 @@ def admin_dashboard():
     site_settings = Settings.query.first()
     return render_template('admin.html', categories=categories, products=products, orders=orders, site_settings=site_settings, settings=site_settings)
 
-# --- সেটিংস, এসইও ও এডসেন্স কোড আপডেট ---
+# --- সেটিংস ও এসইও আপডেট ---
 @app.route('/admin/settings/update', methods=['POST'])
 def update_settings():
     site_settings = Settings.query.first()
@@ -132,7 +132,7 @@ def update_settings():
     site_settings.whatsapp_number = request.form.get('whatsapp_number')
     site_settings.facebook_pixel_id = request.form.get('facebook_pixel_id')
     site_settings.google_search_console = request.form.get('google_search_console')
-    site_settings.google_adsense_code = request.form.get('google_adsense_code')  # এডসেন্স কোড
+    site_settings.google_adsense_code = request.form.get('google_adsense_code')
     site_settings.notice_text = request.form.get('notice_text')
     
     in_dhaka = request.form.get('delivery_inside_dhaka')
@@ -147,10 +147,10 @@ def update_settings():
         site_settings.admin_password = password
         
     db.session.commit()
-    flash('সেটিংস, এসইও ও এডসেন্স সফলভাবে আপডেট করা হয়েছে!', 'success')
+    flash('সেটিংস, এসইও ও ডেলিভারি চার্জ সফলভাবে আপডেট করা হয়েছে!', 'success')
     return redirect(url_for('admin_dashboard'))
 
-# --- প্রোডাক্ট ম্যানেজমেন্ট (ডিসকাউন্ট ও ফ্রি ডেলিভারি সহ) ---
+# --- প্রোডাক্ট ম্যানেজমেন্ট ---
 @app.route('/admin/product/add', methods=['POST'])
 def add_product():
     title = request.form.get('title')
@@ -173,7 +173,7 @@ def add_product():
         )
         db.session.add(new_prod)
         db.session.commit()
-        flash('নতুন প্রোডাক্ট ডিসকাউন্টসহ সফলভাবে পাবলিশ করা হয়েছে!', 'success')
+        flash('নতুন প্রোডাক্ট সফলভাবে পাবলিশ করা হয়েছে!', 'success')
     else:
         flash('দয়া করে প্রয়োজনীয় তথ্যগুলো পূরণ করুন।', 'danger')
         
