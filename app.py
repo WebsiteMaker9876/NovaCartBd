@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here'  # এটিকে আপনার সিক্রেট কি দিয়ে পরিবর্তন করতে পারেন
+app.config['SECRET_KEY'] = 'your-secret-key-here'
 
 # রেন্ডার এবং সুপাবেজ ডাটাবেজ কানেকশন কনফিগারেশন
 database_url = os.environ.get('DATABASE_URL')
@@ -36,7 +36,7 @@ class Order(db.Model):
     customer_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     address = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(50), default='Pending') # স্ট্যাটাস: Pending, Completed ইত্যাদি
+    status = db.Column(db.String(50), default='Pending')
 
 class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,6 +45,10 @@ class Settings(db.Model):
     google_search_console = db.Column(db.String(200))
     notice_text = db.Column(db.String(300))
     admin_password = db.Column(db.String(100))
+
+# অ্যাপ স্টার্ট হওয়ার সাথে সাথে ডাটাবেজ টেবিল তৈরি নিশ্চিত করার জন্য:
+with app.app_context():
+    db.create_all()
 
 # ====================
 # রুট ও রাউটিং (Routes)
@@ -92,7 +96,6 @@ def delete_category(id):
 def delete_order(id):
     order = Order.query.get_or_404(id)
     
-    # শুধুমাত্র কমপ্লিট হওয়া অর্ডারগুলোই ডিলিট করা যাবে
     if order.status and order.status.lower() == 'completed':
         db.session.delete(order)
         db.session.commit()
@@ -102,7 +105,7 @@ def delete_order(id):
         
     return redirect(url_for('admin_dashboard'))
 
-# --- সাইট সেটিংস আপডেট (পিক্সেল, সার্চ কনসোল, পাসওয়ার্ড ইত্যাদি) ---
+# --- সাইট সেটিংস আপডেট ---
 @app.route('/admin/settings/update', methods=['POST'])
 def update_settings():
     site_settings = Settings.query.first()
@@ -124,6 +127,4 @@ def update_settings():
     return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # স্বয়ংক্রিয়ভাবে নতুন Settings টেবিল তৈরি করে নেবে
     app.run(debug=True)
