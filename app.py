@@ -67,10 +67,36 @@ def index():
 @app.route('/admin')
 def admin_dashboard():
     categories = Category.query.all()
+    products = Product.query.all()
     orders = Order.query.all()
     site_settings = Settings.query.first()
-    # 'settings' এবং 'site_settings' উভয় নামেই পাস করা হলো যাতে টেমপ্লেটে কোনো এরর না আসে
-    return render_template('admin.html', categories=categories, orders=orders, site_settings=site_settings, settings=site_settings)
+    return render_template('admin.html', categories=categories, products=products, orders=orders, site_settings=site_settings, settings=site_settings)
+
+# --- প্রোডাক্ট ম্যানেজমেন্ট (অ্যাডমিন প্যানেل থেকে প্রোডাক্ট যোগ ও ডিলিট) ---
+@app.route('/admin/product/add', methods=['POST'])
+def add_product():
+    title = request.form.get('title')
+    price = request.form.get('price')
+    category_id = request.form.get('category_id')
+    image_url = request.form.get('image_url')
+    
+    if title and price and category_id:
+        new_prod = Product(title=title, price=float(price), category_id=int(category_id), image_url=image_url)
+        db.session.add(new_prod)
+        db.session.commit()
+        flash('প্রোডাক্ট সফলভাবে যোগ করা হয়েছে!', 'success')
+    else:
+        flash('দয়া করে সঠিক তথ্য দিয়ে প্রোডাক্ট ফর্ম পূরণ করুন।', 'danger')
+        
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/product/delete/<int:id>', methods=['POST'])
+def delete_product(id):
+    product = Product.query.get_or_404(id)
+    db.session.delete(product)
+    db.session.commit()
+    flash('প্রোডাক্টটি সফলভাবে মুছে ফেলা হয়েছে!', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 # --- ক্যাটাগরি ম্যানেজমেন্ট ---
 @app.route('/admin/category/add', methods=['POST'])
