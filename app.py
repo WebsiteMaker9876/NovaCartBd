@@ -31,6 +31,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     price = db.Column(db.Float, nullable=False)
+    description = db.Column(db.Text)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     image_url = db.Column(db.String(300))
 
@@ -43,11 +44,15 @@ class Order(db.Model):
 
 class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    site_name = db.Column(db.String(100), default='NovaCart BD')
+    site_title = db.Column(db.String(200), default='NovaCart BD - Online Shopping in Bangladesh')
+    meta_description = db.Column(db.Text, default='Best online shopping store in Bangladesh with Cash on Delivery.')
+    meta_keywords = db.Column(db.String(300), default='ecommerce, online shop, bangladesh, nova cart')
     whatsapp_number = db.Column(db.String(50))
     facebook_pixel_id = db.Column(db.String(100))
     google_search_console = db.Column(db.String(200))
     notice_text = db.Column(db.String(300))
-    admin_password = db.Column(db.String(100))
+    admin_password = db.Column(db.String(100), default='admin123')
 
 # অ্যাপ স্টার্ট হওয়ার সাথে সাথে ডাটাবেজ টেবিল তৈরি নিশ্চিত করা
 with app.app_context():
@@ -72,21 +77,47 @@ def admin_dashboard():
     site_settings = Settings.query.first()
     return render_template('admin.html', categories=categories, products=products, orders=orders, site_settings=site_settings, settings=site_settings)
 
-# --- প্রোডাক্ট ম্যানেজমেন্ট (অ্যাডমিন প্যানেل থেকে প্রোডাক্ট যোগ ও ডিলিট) ---
+# --- এসইও এবং সাইট সেটিংস আপডেট ---
+@app.route('/admin/settings/update', methods=['POST'])
+def update_settings():
+    site_settings = Settings.query.first()
+    if not site_settings:
+        site_settings = Settings()
+        db.session.add(site_settings)
+    
+    site_settings.site_name = request.form.get('site_name')
+    site_settings.site_title = request.form.get('site_title')
+    site_settings.meta_description = request.form.get('meta_description')
+    site_settings.meta_keywords = request.form.get('meta_keywords')
+    site_settings.whatsapp_number = request.form.get('whatsapp_number')
+    site_settings.facebook_pixel_id = request.form.get('facebook_pixel_id')
+    site_settings.google_search_console = request.form.get('google_search_console')
+    site_settings.notice_text = request.form.get('notice_text')
+    
+    password = request.form.get('admin_password')
+    if password:
+        site_settings.admin_password = password
+        
+    db.session.commit()
+    flash('এসইও ও সাইট সেটিংস সফলভাবে আপডেট করা হয়েছে!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+# --- প্রোডাক্ট ম্যানেজমেন্ট ---
 @app.route('/admin/product/add', methods=['POST'])
 def add_product():
     title = request.form.get('title')
     price = request.form.get('price')
+    description = request.form.get('description')
     category_id = request.form.get('category_id')
     image_url = request.form.get('image_url')
     
     if title and price and category_id:
-        new_prod = Product(title=title, price=float(price), category_id=int(category_id), image_url=image_url)
+        new_prod = Product(title=title, price=float(price), description=description, category_id=int(category_id), image_url=image_url)
         db.session.add(new_prod)
         db.session.commit()
-        flash('প্রোডাক্ট সফলভাবে যোগ করা হয়েছে!', 'success')
+        flash('নতুন প্রোডাক্ট সফলভাবে পাবলিশ করা হয়েছে!', 'success')
     else:
-        flash('দয়া করে সঠিক তথ্য দিয়ে প্রোডাক্ট ফর্ম পূরণ করুন।', 'danger')
+        flash('দয়া করে প্রয়োজনীয় তথ্যগুলো পূরণ করুন।', 'danger')
         
     return redirect(url_for('admin_dashboard'))
 
@@ -95,7 +126,7 @@ def delete_product(id):
     product = Product.query.get_or_404(id)
     db.session.delete(product)
     db.session.commit()
-    flash('প্রোডাক্টটি সফলভাবে মুছে ফেলা হয়েছে!', 'success')
+    flash('প্রোডাক্টটি সফলভাবে ডিলিট করা হয়েছে!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 # --- ক্যাটাগরি ম্যানেজমেন্ট ---
@@ -118,10 +149,20 @@ def delete_category(id):
     category = Category.query.get_or_404(id)
     db.session.delete(category)
     db.session.commit()
-    flash('অপ্রয়োজনীয় ক্যাটাগরি সফলভাবে মুছে ফেলা হয়েছে!', 'success')
+    flash('ক্যাটাগরি সফলভাবে মুছে ফেলা হয়েছে!', 'success')
     return redirect(url_for('admin_dashboard'))
 
-# --- অর্ডার ম্যানেজমেন্ট ও ডিলিট অপশন ---
+# --- অর্ডার ম্যানেজমেন্ট ও স্ট্যাটাস আপডেট ---
+@app.route('/admin/order/status/<int:id>', methods=['POST'])
+def update_order_status(id):
+    order = Order.query.get_or_404(id)
+    new_status = request.form.get('status')
+    if new_status:
+        order.status = new_status
+        db.session.commit()
+        flash('অর্ডারের স্ট্যাটাস সফলভাবে আপডেট করা হয়েছে!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
 @app.route('/admin/order/delete/<int:id>', methods=['POST'])
 def delete_order(id):
     order = Order.query.get_or_404(id)
@@ -131,29 +172,8 @@ def delete_order(id):
         db.session.commit()
         flash('সম্পন্ন হওয়া অর্ডারটি সফলভাবে ডিলিট করা হয়েছে।', 'success')
     else:
-        flash('যে অর্ডারগুলোর কাজ এখনো সম্পূর্ণ হয়নি সেগুলো ডিলিট করা যাবে না!', 'danger')
+        flash('যে অর্ডারগুলোর কাজ এখনো সম্পূর্ণ (Completed) হয়নি সেগুলো ডিলিট করা যাবে না!', 'danger')
         
-    return redirect(url_for('admin_dashboard'))
-
-# --- সাইট সেটিংস আপডেট ---
-@app.route('/admin/settings/update', methods=['POST'])
-def update_settings():
-    site_settings = Settings.query.first()
-    if not site_settings:
-        site_settings = Settings()
-        db.session.add(site_settings)
-    
-    site_settings.whatsapp_number = request.form.get('whatsapp_number')
-    site_settings.facebook_pixel_id = request.form.get('facebook_pixel_id')
-    site_settings.google_search_console = request.form.get('google_search_console')
-    site_settings.notice_text = request.form.get('notice_text')
-    
-    password = request.form.get('admin_password')
-    if password:
-        site_settings.admin_password = password
-        
-    db.session.commit()
-    flash('সেটিংস সফলভাবে সেভ করা হয়েছে!', 'success')
     return redirect(url_for('admin_dashboard'))
 
 if __name__ == '__main__':
