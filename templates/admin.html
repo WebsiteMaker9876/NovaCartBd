@@ -77,10 +77,82 @@
         </div>
     </div>
 
+    <!-- নতুন প্রোডাক্ট যোগ করার সেকশন -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">🛒 নতুন প্রোডাক্ট যোগ করুন</h4>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('add_product') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">প্রোডাক্টের নাম</label>
+                    <input type="text" name="title" class="form-control" placeholder="প্রোডাক্টের নাম লিখুন" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">মূল্য (টাকা)</label>
+                    <input type="number" step="0.01" name="price" class="form-control" placeholder="দাম কত?" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">ক্যাটাগরি সিলেক্ট করুন</label>
+                    <select name="category_id" class="form-control" required>
+                        <option value="">ক্যাটাগরি বেছে নিন</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">ছবির লিংক (Image URL)</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="ছবির সরাসরি লিংক দিন">
+                </div>
+                <button type="submit" class="btn btn-info text-white w-100 py-2 font-weight-bold">প্রোডাক্ট পাবলিশ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- প্রোডাক্ট লিস্ট ও ডিলিট করার অপশন -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h4 class="mb-0">📦 প্রোডাক্ট লিস্ট ও ম্যানেজমেন্ট</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>নাম</th>
+                            <th>দাম</th>
+                            <th>ক্যাটাগরি</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prod in products %}
+                        <tr>
+                            <td>{{ prod.title }}</td>
+                            <td>৳{{ prod.price }}</td>
+                            <td>{{ prod.category.name if prod.category else 'N/A' }}</td>
+                            <td>
+                                <form action="{{ url_for('delete_product', id=prod.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">ডিলিট</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">কোনো প্রোডাক্ট পাওয়া যায়নি।</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- অর্ডার ম্যানেজমেন্ট ও ডিলিট অপশন -->
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white">
-            <h4 class="mb-0">📦 অর্ডার ম্যানেজমেন্ট (Completed অর্ডার ডিলিট সুবিধা)</h4>
+            <h4 class="mb-0">📋 অর্ডার ম্যানেজমেন্ট (Completed অর্ডার ডিলিট সুবিধা)</h4>
         </div>
         <div class="card-body">
             <div class="table-responsive">
