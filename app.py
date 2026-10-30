@@ -5,10 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 
-# রেন্ডার এবং সুপাবেজ ডাটাবেজ কানেকশন কনফিগারেশন
+# রেন্ডার এবং সুপাবেজ ডাটাবেজ কানেকশন কনফিগারেশন (psycopg2 ড্রাইভার নিশ্চিত করা হলো)
 database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif database_url.startswith("postgresql://") and "+psycopg2" not in database_url:
+        database_url = database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -46,7 +49,7 @@ class Settings(db.Model):
     notice_text = db.Column(db.String(300))
     admin_password = db.Column(db.String(100))
 
-# অ্যাপ স্টার্ট হওয়ার সাথে সাথে ডাটাবেজ টেবিল তৈরি নিশ্চিত করার জন্য:
+# অ্যাপ স্টার্ট হওয়ার সাথে সাথে ডাটাবেজ টেবিল তৈরি নিশ্চিত করা
 with app.app_context():
     db.create_all()
 
