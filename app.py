@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 
-# রেন্ডার এবং সুপাবেজ ডাটাবেজ কানেকশন কনফিগারেশন (psycopg2 ড্রাইভার নিশ্চিত করা হলো)
+# রেন্ডার এবং সুপাবেজ ডাটাবেজ কানেকশন কনফিগারেশন
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
     if database_url.startswith("postgres://"):
@@ -62,14 +62,15 @@ def index():
     categories = Category.query.all()
     products = Product.query.all()
     site_settings = Settings.query.first()
-    return render_template('index.html', categories=categories, products=products, site_settings=site_settings)
+    return render_template('index.html', categories=categories, products=products, site_settings=site_settings, settings=site_settings)
 
 @app.route('/admin')
 def admin_dashboard():
     categories = Category.query.all()
     orders = Order.query.all()
     site_settings = Settings.query.first()
-    return render_template('admin.html', categories=categories, orders=orders, site_settings=site_settings)
+    # 'settings' এবং 'site_settings' উভয় নামেই পাস করা হলো যাতে টেমপ্লেটে কোনো এরর না আসে
+    return render_template('admin.html', categories=categories, orders=orders, site_settings=site_settings, settings=site_settings)
 
 # --- ক্যাটাগরি ম্যানেজমেন্ট ---
 @app.route('/admin/category/add', methods=['POST'])
